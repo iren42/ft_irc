@@ -1,5 +1,4 @@
 #include "Server.hpp"
-#include "Client.hpp"
 #include "Colors.hpp"
 
 int main(int ac, char **av) {
