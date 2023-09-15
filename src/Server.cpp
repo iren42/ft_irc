@@ -14,53 +14,63 @@ Server::Server(std::string port, std::string pw) : _port(port), _pw(pw)
 
 void	Server::launch()
 {}
+
 void	Server::generate_socket()
 {
-/*#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+/*#include <iostream>
+#include <cstring>
 #include <unistd.h>
 #include <arpa/inet.h>
-#include <sys/types.h>
 #include <sys/socket.h>
 
-int main() {
-    int sockfd; // Le descripteur de la socket
-    struct sockaddr_in server_addr; // Structure pour les informations du serveur
+#define PORT 6667 // Port IRC standard
 
-    // Créer la socket
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd == -1) {
+int main() {
+    int server_socket;
+    sockaddr_in server_addr;
+
+    // Créez la socket
+    server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    if (server_socket == -1) {
         perror("Erreur lors de la création de la socket");
         exit(EXIT_FAILURE);
     }
 
-    // Initialiser les informations du serveur
-    server_addr.sin_family = AF_INET; // Famille d'adresses Internet
-    server_addr.sin_port = htons(8080); // Port (8080 dans cet exemple)
-    server_addr.sin_addr.s_addr = INADDR_ANY; // Accepter les connexions de n'importe quelle adresse IP
+    // Initialisez la structure sockaddr_in
+    memset(&server_addr, 0, sizeof(server_addr));
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_addr.s_addr = INADDR_ANY; // Écoutez sur toutes les interfaces réseau
+    server_addr.sin_port = htons(PORT);
 
-    // Lier la socket au port et à l'adresse
-    if (bind(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1) {
+    // Liez la socket à l'adresse et au port
+    if (bind(server_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
         perror("Erreur lors de la liaison de la socket");
-        close(sockfd);
+        close(server_socket);
         exit(EXIT_FAILURE);
     }
 
-    // Écouter les connexions entrantes
-    if (listen(sockfd, 5) == -1) { // Vous pouvez ajuster le nombre maximal de connexions en attente (ici, 5)
-        perror("Erreur lors de l'écoute de la socket");
-        close(sockfd);
+    // Mettez la socket en mode écoute
+    if (listen(server_socket, 5) == -1) {
+        perror("Erreur lors de la mise en mode écoute de la socket");
+        close(server_socket);
         exit(EXIT_FAILURE);
     }
 
-    printf("Serveur en attente de connexions...\n");
+    std::cout << "Serveur IRC en attente de connexions sur le port " << PORT << "..." << std::endl;
 
-    // Plus de code pour accepter et gérer les connexions ici...
+    // Vous pouvez maintenant accepter les connexions entrantes, gérer les clients IRC, etc.
 
-    // Fermer la socket lorsque vous avez terminé
-    close(sockfd);
+    // Fermez la socket du serveur lorsque vous avez terminé
+    close(server_socket);
 
     return 0;
 }*/
+
+	//creation de la socket
+	sock_fd = socket(AF_INET, SOCK_STREAM, 0); // AF_INET -> on utilise IPv4, SOCK_STREAM -> socket de type flux (TCP), 0 pour mettre le protocole par defaut (IPv4)
+	if (sock_fd == -1) {
+		throw std::runtime_error("Error while generating a socket");}
+	if (fcntl(sock_fd, F_SETFL, O_NONBLOCK) < 0) { //fcntl fonction modifiant les attribut socket, F_SETFL pour set un mode, O_NONBLOCK pour definir le mode a set (non bloquant)
+		throw std::runtime_error("Error while setting spcket to non-blocking mode")
+	
 }
