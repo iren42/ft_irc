@@ -11,7 +11,7 @@ class Server
 	private:
 	int	_sockfd;
 	int	_epollfd;
-	std::string	_port;
+	int	_port;
 	std::string	_pw;
 
 	Server(const Server&);
