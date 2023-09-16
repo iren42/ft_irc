@@ -3,7 +3,7 @@ NAME		= ircserv
 SRCDIR		= src/
 OBJDIR		= obj/
 INCLUDES	= inc/
-SRC			= main.cpp Client.cpp Server.cpp
+SRC			= main.cpp Client.cpp Server.cpp Channel.cpp
 # Compiler options
 CC			= c++
 CFLAGS		= -Wall -Wextra -Werror -std=c++98

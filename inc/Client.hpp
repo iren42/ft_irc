@@ -1,12 +1,11 @@
 //
 // Created by d420d4 on 15/09/23.
 //
+#ifndef FT_IRC_CLIENT_H
+#define FT_IRC_CLIENT_H
 
 #include <string>
 #include <iostream>
-
-#ifndef FT_IRC_CLIENT_H
-#define FT_IRC_CLIENT_H
 
 class Client {
 private:
