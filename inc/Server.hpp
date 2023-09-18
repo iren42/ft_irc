@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <sys/epoll.h>
 #include <string>
+#include <sys/type.h>
 
 class Server 
 {
@@ -20,7 +21,7 @@ class Server
 
 	public:
 	~Server();
-	Server(std::string, std::string);
+	Server(int, std::string);
 
 		void	launch();
 		void	generate_socket();
