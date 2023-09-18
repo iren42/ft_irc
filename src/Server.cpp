@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-// test iren
+
 Server::~Server()
 {
 	std::cout << "Server destructor called" << std::endl;
@@ -23,7 +23,7 @@ void	Server::launch()
 	if (_epollfd == -1)
 		return ;
 	event.data.fd = _epollfd; /* return the fd to us later */
-	event.events = EPOLLIN; 
+	event.events = EPOLLIN;
 
 
 	struct epoll_event *events ;
@@ -53,26 +53,32 @@ void	Server::launch()
 }
 void	Server::generate_socket()
 {
+	struct sockaddr_in sock_serv;
+	/*
+	struct sockaddr_in {
+    short sin_family;           // Famille d'adresses (AF_INET pour IPv4)
+    unsigned short sin_port;    // Numéro de port en ordre octet réseau (big-endian)
+    struct in_addr sin_addr;    // Adresse IP en format binaire
+    char sin_zero[8];           // Remplissage pour alignement mémoire}; */
 
-	if ((_sockfd = socket(PF_INET, SOCK_STREAM, 0)) < 0)
-		throw std::runtime_error("Error while generating socket\n");
+	//creation de la socket
+	sock_fd = socket(AF_INET, SOCK_STREAM, 0); // AF_INET -> on utilise IPv4, SOCK_STREAM -> socket de type flux (TCP), 0 pour mettre le protocole par defaut (IPv4)
+	if (sock_fd == -1) {
+		throw std::runtime_error("Error while generating a socket");}
+	if (fcntl(sock_fd, F_SETFL, O_NONBLOCK) < 0) { //fcntl fonction modifiant les attribut socket, F_SETFL pour set un mode, O_NONBLOCK pour definir le mode a set (non bloquant)
+		throw std::runtime_error("Error while setting spcket to non-blocking mode");}
 
-	if (fcntl(_sockfd, F_SETFL, O_NONBLOCK) < 0)
-		throw std::runtime_error("Error while setting socket to non blocking mode\n");
+	//initialisation de la structure sockaddr_in pour definir les parametre de l'adresse du Serveur
+	sock_serv.sin_family = AF_INET; //sock utilise IPv4
+	sock_serv.sin_addr = INADDR_ANY; //le serveur ecoutera sur toutes les interfaces reseauc disponibles
+	sock_serv.sin_port = htons(server._port); //on convertit le port en ordre octet réseau
 
-	struct sockaddr_in serv_socket = {AF_INET, 0, {0}, {0}};
-	serv_socket.sin_addr.s_addr = htonl(INADDR_ANY);
-	int port = std::strtol(_port.c_str(), NULL, 10);
-std::cout << "char port = '" << _port << "', int port = '" << port << "'\n";
-	if (port <= 0 || port > 65535)
-		throw std::invalid_argument("Invalid port number\n");
-	serv_socket.sin_port = htons(port);
+	//liage de la socket à l'adresse et au port
+	if (bind(sock_serv, (struct sockaddr*) &sock_fd, sizeof(sock_fd)) < 0){
+		throw std::runtime_error("Error While binding socket");} //bind() lie la socket a l'adresse et au port spécifié, msg si Erreur
 
-	if (bind(_sockfd, (struct sockaddr*) & serv_socket, sizeof(serv_socket)) < 0)
-		throw std::runtime_error("Error while binding socket\n");
-
-	if (listen(_sockfd, 1000) < 0)
-		throw std::runtime_error("Error while listening on socket\n");
+	if (listen(fd, address.sin_port) == < 0) {
+		throw std::runtime_error("Error while putting the socket in listening mode");}
 
 	std::cout << "Server socket has been generated\n";
 }

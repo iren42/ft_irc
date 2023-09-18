@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <sys/epoll.h>
 #include <string>
+#include <sys/type.h>
 
 #include <cstdlib> // malloc
 #include <cstdio> // printf
@@ -20,23 +21,23 @@
 
 class Server
 {
-private:
-    int	_sockfd;
-    int	_epollfd;
+	private:
+	int	_sockfd;
+	int	_epollfd;
+	int	_port;
     int	_running;
-    std::string	_port;
-    std::string	_pw;
+	std::string	_pw;
 
-    Server(const Server&);
-    Server& operator=(const Server&);
+	Server(const Server&);
+	Server& operator=(const Server&);
 
 
-public:
-    ~Server();
-    Server(std::string, std::string);
+	public:
+	~Server();
+	Server(int, std::string);
 
-    void	launch();
-    void	generate_socket();
+		void	launch();
+		void	generate_socket();
 };
 
 #endif
