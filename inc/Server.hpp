@@ -4,8 +4,8 @@
 #include <iostream>
 #include <sys/socket.h>
 #include <sys/epoll.h>
+#include <sys/types.h>
 #include <string>
-#include <sys/type.h>
 
 #include <cstdlib> // malloc
 #include <cstdio> // printf
@@ -22,7 +22,7 @@
 class Server
 {
 	private:
-	int	_sockfd;
+	int	_sock_fd;
 	int	_epollfd;
 	int	_port;
     int	_running;
