@@ -6,6 +6,16 @@
 #include <sys/epoll.h>
 #include <string>
 
+#include <cstdlib> // malloc
+#include <cstdio> // printf
+
+#include <unistd.h>
+#include <fcntl.h>
+
+#include <arpa/inet.h>
+
+#define MAX_EVENTS 64
+
 class Server 
 {
 	private:

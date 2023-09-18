@@ -3,10 +3,19 @@ NAME		= ircserv
 SRCDIR		= src/
 OBJDIR		= obj/
 INCLUDES	= inc/
+<<<<<<< HEAD
 SRC			= main.cpp Client.cpp Server.cpp Channel.cpp
 # Compiler options
 CC			= c++
 CFLAGS		= -Wall -Wextra -Werror -std=c++98
+=======
+SRC			= main.cpp \
+				Server.cpp
+# Compiler options
+CC			= c++
+CFLAGS		= -std=c++98
+#-Wall -Wextra -Werror 
+>>>>>>> d0db9bf (epoll: just a copy pasta of a tutorial)
 
 OBJ			= $(patsubst %.cpp, %.o, $(SRC))
 OBJS		= $(addprefix ${OBJDIR}, ${OBJ})
@@ -23,7 +32,11 @@ $(NAME): $(OBJS)
 	@tput setaf 6
 	@echo "${@}"
 
+<<<<<<< HEAD
 	@$(CC) -o $@ $(OBJS)
+=======
+	$(CC) -o $@ $(OBJS)
+>>>>>>> d0db9bf (epoll: just a copy pasta of a tutorial)
 
 $(OBJDIR)%.o: $(SRCDIR)%.cpp
 	@make create_dir_objs --no-print-directory
@@ -64,4 +77,8 @@ print_name:
 	@tput setaf 208
 	@printf "%-10s " $(NAME)
 
+<<<<<<< HEAD
 .PHONY: all clean fclean re test print_name create_dir_objs
+=======
+.PHONY: all clean fclean re test print_name create_dir_objs
+>>>>>>> d0db9bf (epoll: just a copy pasta of a tutorial)
