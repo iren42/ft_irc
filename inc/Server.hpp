@@ -8,6 +8,7 @@
 
 #include <cstdlib> // malloc
 #include <cstdio> // printf
+#include <cstring> // strncmp
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -15,12 +16,14 @@
 #include <arpa/inet.h>
 
 #define MAX_EVENTS 64
+#define READ_SIZE 10
 
 class Server 
 {
 	private:
 	int	_sockfd;
 	int	_epollfd;
+	int	_running;
 	std::string	_port;
 	std::string	_pw;
 
