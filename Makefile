@@ -7,12 +7,7 @@ SRC			= main.cpp Client.cpp Server.cpp Channel.cpp
 # Compiler options
 CC			= c++
 CFLAGS		= -Wall -Wextra -Werror -std=c++98
-SRC			= main.cpp \
-				Server.cpp
-# Compiler options
-CC			= c++
-CFLAGS		= -std=c++98
-#-Wall -Wextra -Werror 
+
 
 OBJ			= $(patsubst %.cpp, %.o, $(SRC))
 OBJS		= $(addprefix ${OBJDIR}, ${OBJ})

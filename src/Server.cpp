@@ -1,6 +1,5 @@
 #include "Server.hpp"
 
-
 Server::~Server()
 {
 	std::cout << "Server destructor called" << std::endl;
@@ -11,23 +10,27 @@ Server::Server(int port, std::string pw) : _port(port), _pw(pw)
 {
 	std::cout << "Server constructor called" << std::endl;
 	generate_socket();
+	_running = 1;
 }
 
 void	Server::launch()
 {
-	int	fd;
 	struct epoll_event	event;
+	char read_buffer[READ_SIZE + 1];
+	int	event_count;
 
 	// create epoll object
 	_epollfd = epoll_create1(0);
 	if (_epollfd == -1)
 		return ;
-	event.data.fd = _epollfd; /* return the fd to us later */
-	event.events = EPOLLIN;
+
+	event.data.fd = 0; /* return the fd to us later */
+	event.events = EPOLLIN; 
 
 
 	struct epoll_event *events ;
-	int nr_events, i, epfd;
+	int i;
+	size_t bytes_read;
 
 	// allocate events memory
 	events = (struct epoll_event*)malloc (sizeof (*events) * MAX_EVENTS);
@@ -36,19 +39,37 @@ void	Server::launch()
 		return ;
 	}
 
-	// block until an event occurs
-	nr_events = epoll_wait (_epollfd, events, MAX_EVENTS, -1);
-	if (nr_events < 0) {
-		perror ("epoll_wait");
-		free (events);
+	if(epoll_ctl(_epollfd, EPOLL_CTL_ADD, 0, &event))
+	{
+		fprintf(stderr, "Failed to add file descriptor to epoll\n");
+		close(_epollfd);
 		return ;
 	}
+	while (_running) {
+		printf("\nPolling for input...\n");
+		event_count = epoll_wait(_epollfd, events, MAX_EVENTS, 30000);
+		if (event_count < 0)
+		{
+			perror ("epoll_wait");
+			free (events);
+			return ;
+		}
+		printf("%d ready events\n", event_count);
+		for (i = 0; i < event_count; i++) {
+			printf("Reading file descriptor '%d' -- ", events[i].data.fd);
+			bytes_read = read(events[i].data.fd, read_buffer, READ_SIZE);
+			printf("%zd bytes read.\n", bytes_read);
+			read_buffer[bytes_read] = '\0';
+			printf("Read '%s'\n", read_buffer);
 
-	// handle events
-	for (i = 0; i < nr_events; i++) {
-		printf ("event=%ld on fd=%dn",
-				events[i].events,
-				events[i].data.fd);
+			if(!strncmp(read_buffer, "stop\n", 5))
+				_running = 0;
+		}
+	}
+
+	if (close(_epollfd)) {
+		fprintf(stderr, "Failed to close epoll file descriptor\n");
+		return ;
 	}
 }
 void	Server::generate_socket()
