@@ -10,7 +10,6 @@ Server::~Server()
 Server::Server(std::string port, std::string pw) : _port(port), _pw(pw)
 {
 	std::cout << "Server constructor called" << std::endl;
-	generate_socket();
 	_running = 1;
 }
 
@@ -21,11 +20,12 @@ void	Server::launch()
 	char read_buffer[READ_SIZE + 1];
 	int	event_count;
 
+	generate_socket();
 	// create epoll object
 	_epollfd = epoll_create1(0);
 	if (_epollfd == -1)
 		return ;
-	event.data.fd = 0; /* return the fd to us later */
+	event.data.fd = _sockfd; /* return the fd to us later */
 	event.events = EPOLLIN; 
 
 
@@ -33,39 +33,78 @@ void	Server::launch()
 	int nr_events, i;
 	size_t bytes_read;
 
+	struct sockaddr	in_addr;
+	socklen_t	in_len;
+	int	infd;
 	// allocate events memory
 	events = (struct epoll_event*)malloc (sizeof (*events) * MAX_EVENTS);
 	if (!events) {
 		std::cerr << "malloc" << std::endl;
 		return ;
 	}
-
-	if(epoll_ctl(_epollfd, EPOLL_CTL_ADD, 0, &event))
+	if(epoll_ctl(_epollfd, EPOLL_CTL_ADD, _sockfd, &event))
 	{
 		fprintf(stderr, "Failed to add file descriptor to epoll\n");
 		close(_epollfd);
 		return ;
 	}
-	while (_running) {
+	while (_running)
+	{
 		printf("\nPolling for input...\n");
-		event_count = epoll_wait(_epollfd, events, MAX_EVENTS, 30000);
+		event_count = epoll_wait(_epollfd, events, MAX_EVENTS, -1);
 		if (event_count < 0)
 		{
 			perror ("epoll_wait");
 			free (events);
 			return ;
 		}
-		printf("%d ready events\n", event_count);
-		for (i = 0; i < event_count; i++) {
-			printf("Reading file descriptor '%d' -- ", events[i].data.fd);
-			bytes_read = read(events[i].data.fd, read_buffer, READ_SIZE);
-			printf("%zd bytes read.\n", bytes_read);
-			read_buffer[bytes_read] = '\0';
-			printf("Read '%s'\n", read_buffer);
+		i = 0;
+		printf("%d ready events, %d\n", event_count, _sockfd);
+		while (i < event_count)
+		{
+			if (events[i].data.fd == _sockfd)
+			{
+				infd = accept (_sockfd, &in_addr, &in_len); // create new socket fd from pending listening socket queue
+				if (infd == -1) // error
+				{
+					if ((errno == EAGAIN) ||(errno == EWOULDBLOCK)) {
+						break; // We have processed all incoming connections.
+					}
+					else {
+						perror ("accept");
+						break;}
+				}
 
-			if(!strncmp(read_buffer, "stop\n", 5))
-				_running = 0;
+				int flags = fcntl (infd, F_GETFL, 0); // mark new socket fd as non -blocking
+				flags |= O_NONBLOCK;
+				fcntl (infd, F_SETFL, flags);
+
+				event.data.fd = infd;
+				event.events = EPOLLIN;
+				epoll_ctl (_epollfd, EPOLL_CTL_ADD, infd, &event);
+				std::cout << "Client_FD[" << event.data.fd << "] connected" << std::endl;
+
+			}
+			else // is a Client msg
+			{
+				for (i = 0; i < event_count; i++)
+				{
+					printf("Reading file descriptor '%d' -- ", events[i].data.fd);
+					bytes_read = read(events[i].data.fd, read_buffer, READ_SIZE);
+					printf("%zd bytes read.\n", bytes_read);
+					read_buffer[bytes_read] = '\0';
+					printf("Read '%s'\n", read_buffer);
+
+					if(!strncmp(read_buffer, "stop\n", 5))
+						_running = 0;
+				}
+
+				std::cout << "Here 3" << std::endl;
+			}
+			i++;
 		}
+
+
 	}
 
 	if (close(_epollfd)) {

@@ -15,6 +15,8 @@
 
 #include <arpa/inet.h>
 
+#include <cerrno>
+
 #define MAX_EVENTS 64
 #define READ_SIZE 10
 

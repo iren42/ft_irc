@@ -7,7 +7,7 @@ SRC			= main.cpp \
 				Server.cpp
 # Compiler options
 CC			= c++
-CFLAGS		= -std=c++98
+CFLAGS		= -std=c++98 
 #-Wall -Wextra -Werror 
 
 OBJ			= $(patsubst %.cpp, %.o, $(SRC))
@@ -25,7 +25,7 @@ $(NAME): $(OBJS)
 	@tput setaf 6
 	@echo "${@}"
 
-	$(CC) -o $@ $(OBJS)
+	@$(CC) -o $@ $(OBJS)
 
 $(OBJDIR)%.o: $(SRCDIR)%.cpp
 	@make create_dir_objs --no-print-directory
