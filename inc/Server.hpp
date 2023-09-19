@@ -20,6 +20,7 @@
 #define MAX_EVENTS 64
 #define READ_SIZE 10
 
+#define SUCCESS 1
 class Server 
 {
 	private:
@@ -32,7 +33,8 @@ class Server
 	Server(const Server&);
 	Server& operator=(const Server&);
 
-
+	int	epoll_add_fd(int, int, struct epoll_event&);
+	int	new_connection(struct epoll_event&);
 	public:
 	~Server();
 	Server(std::string, std::string);
