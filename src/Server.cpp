@@ -42,15 +42,16 @@ void	Server::launch()
 		std::cerr << "malloc" << std::endl;
 		return ;
 	}
+
 	if(epoll_ctl(_epollfd, EPOLL_CTL_ADD, _sockfd, &event))
 	{
-		fprintf(stderr, "Failed to add file descriptor to epoll\n");
+		std::cerr << "Failed to add file descriptor to epoll" << std::endl;
 		close(_epollfd);
 		return ;
 	}
 	while (_running)
 	{
-		printf("\nPolling for input...\n");
+		std::cout << "Polling for input..." << std::endl;
 		event_count = epoll_wait(_epollfd, events, MAX_EVENTS, -1);
 		if (event_count < 0)
 		{
@@ -59,7 +60,6 @@ void	Server::launch()
 			return ;
 		}
 		i = 0;
-		printf("%d ready events, %d\n", event_count, _sockfd);
 		while (i < event_count)
 		{
 			if (events[i].data.fd == _sockfd)
@@ -85,30 +85,28 @@ void	Server::launch()
 				std::cout << "Client_FD[" << event.data.fd << "] connected" << std::endl;
 
 			}
-			else // is a Client msg
+			else // is a READ msg
 			{
-				for (i = 0; i < event_count; i++)
+				bytes_read = read(events[i].data.fd, read_buffer, READ_SIZE);
+				read_buffer[bytes_read] = '\0';
+				std::cout << bytes_read << " bytes read" << std::endl;
+				std::cout << "Client_FD[" << events[i].data.fd << "] wrote'" << read_buffer << "'" << std::endl;
+
+				if(!strncmp(read_buffer, "/QUIT\n", 7) || !strncmp(read_buffer, "/quit\n", 7))
 				{
-					printf("Reading file descriptor '%d' -- ", events[i].data.fd);
-					bytes_read = read(events[i].data.fd, read_buffer, READ_SIZE);
-					printf("%zd bytes read.\n", bytes_read);
-					read_buffer[bytes_read] = '\0';
-					printf("Read '%s'\n", read_buffer);
-
-					if(!strncmp(read_buffer, "stop\n", 5))
-						_running = 0;
+					std::cout << "Client_FD[" << events[i].data.fd << "] left the server." << std::endl;
+					close (events[i].data.fd);
 				}
-
-				std::cout << "Here 3" << std::endl;
 			}
 			i++;
 		}
+	
 
 
 	}
 
 	if (close(_epollfd)) {
-		fprintf(stderr, "Failed to close epoll file descriptor\n");
+		std::cerr << "Failed to close epoll file descriptor" << std::endl;
 		return ;
 	}
 }
