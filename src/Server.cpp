@@ -74,7 +74,7 @@ void	Server::launch()
 }
 void	Server::generate_socket()
 {
-	struct sockaddr_in sock_serv;
+	struct sockaddr_in _sock_serv;
 	/*
 	struct sockaddr_in {
     short sin_family;           // Famille d'adresses (AF_INET pour IPv4)
@@ -90,15 +90,15 @@ void	Server::generate_socket()
 		throw std::runtime_error("Error while setting spcket to non-blocking mode");}
 
 	//initialisation de la structure sockaddr_in pour definir les parametre de l'adresse du Serveur
-	sock_serv.sin_family = AF_INET; //sock utilise IPv4
-	sock_serv.sin_addr.s_addr = INADDR_ANY; //le serveur ecoutera sur toutes les interfaces reseauc disponibles
-	sock_serv.sin_port = htons(_port); //on convertit le port en ordre octet réseau
+	_sock_serv.sin_family = AF_INET; //sock utilise IPv4
+	_sock_serv.sin_addr.s_addr = INADDR_ANY; //le serveur ecoutera sur toutes les interfaces reseauc disponibles
+	_sock_serv.sin_port = htons(_port); //on convertit le port en ordre octet réseau
 
 	//liage de la socket à l'adresse et au port
-	if (bind(_sock_fd, (struct sockaddr*) &_sock_fd, sizeof(_sock_fd)) == -1){
+	if (bind(_sock_fd, (struct sockaddr*) &_sock_serv, sizeof(_sock_serv)) == -1){
 		throw std::runtime_error("Error While binding socket");} //bind() lie la socket a l'adresse et au port spécifié, msg si Erreur
 
-	if (listen(_sock_fd, sock_serv.sin_port) < 0) {
+	if (listen(_sock_fd, _sock_serv.sin_port) < 0) {
 		throw std::runtime_error("Error while putting the socket in listening mode");}
 
 	std::cout << "Server socket has been generated\n";
