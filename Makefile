@@ -3,11 +3,14 @@ NAME		= ircserv
 SRCDIR		= src/
 OBJDIR		= obj/
 INCLUDES	= inc/
-SRC			= main.cpp Client.cpp Server.cpp Channel.cpp
+SRC			= main.cpp \
+				Client.cpp\
+				Server.cpp\
+				Channel.cpp
 # Compiler options
 CC			= c++
-CFLAGS		= -Wall -Wextra -Werror -std=c++98
-
+CFLAGS		= -std=c++98
+#-Wall -Wextra -Werror 
 
 OBJ			= $(patsubst %.cpp, %.o, $(SRC))
 OBJS		= $(addprefix ${OBJDIR}, ${OBJ})

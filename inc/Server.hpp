@@ -4,7 +4,6 @@
 #include <iostream>
 #include <sys/socket.h>
 #include <sys/epoll.h>
-#include <sys/types.h>
 #include <string>
 
 #include <cstdlib> // malloc
@@ -19,10 +18,12 @@
 #define MAX_EVENTS 64
 #define READ_SIZE 10
 
+
+#define SUCCESS 1
 class Server
 {
 	private:
-	int	_sock_fd;
+	int	_sockfd;
 	int	_epollfd;
 	int	_port;
     int	_running;
@@ -31,7 +32,9 @@ class Server
 	Server(const Server&);
 	Server& operator=(const Server&);
 
-
+	int	epoll_add_fd(int, int, struct epoll_event&);
+	int	new_connection(struct epoll_event&);
+	ssize_t	ser_recv(struct epoll_event&);
 	public:
 	~Server();
 	Server(int, std::string);
