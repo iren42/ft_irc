@@ -1,5 +1,6 @@
 #include "Server.hpp"
 
+int running;
 // test iren
 Server::~Server()
 {

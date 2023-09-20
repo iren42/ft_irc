@@ -1,6 +1,8 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+class Server;
+
 #include <iostream>
 #include <sys/socket.h>
 #include <sys/epoll.h>
@@ -28,7 +30,7 @@
 
 
 #define SUCCESS 1
-extern bool running;
+extern int running;
 
 class Server
 {
