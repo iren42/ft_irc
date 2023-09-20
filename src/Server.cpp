@@ -83,7 +83,9 @@ void Server::launch()
 	int event_count;
 	int i;
 
+	signal(SIGINT, &handleSig);
 	generate_socket();
+
 	_epollfd = epoll_create1(0);
 	if (_epollfd == -1)
 		return;
@@ -139,7 +141,15 @@ void Server::launch()
 	if (close(_sockfd))
 		throw std::runtime_error("failed to close socket file descriptor");
 }
-void Server::generate_socket()
+
+void	handleSig(int sigint)
+{
+	std::cout << std::endl << "Exsiting server..." << std::endl;
+	if (sigint == SIGINT)
+		_running = false;
+}
+
+void	Server::generate_socket()
 {
 	struct sockaddr_in _sock_serv;
 	/*
