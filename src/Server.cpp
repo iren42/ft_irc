@@ -40,12 +40,31 @@ int	Server::new_connection(struct epoll_event &event)
 	return (epoll_add_fd(infd, EPOLLIN, event));
 }
 
+ssize_t	Server::ser_recv(struct epoll_event &event)
+{
+	char read_buffer[READ_SIZE + 1];
+	ssize_t	bytes_read;
+
+	bytes_read = recv(event.data.fd, read_buffer, READ_SIZE, MSG_DONTWAIT);
+	if (bytes_read != -1)
+	{
+		read_buffer[bytes_read] = '\0';
+		std::cout << bytes_read << " bytes read" << std::endl;
+		std::cout << "Client_FD[" << event.data.fd << "] wrote'" << read_buffer << "'" << std::endl;
+		if(!strncmp(read_buffer, "/QUIT\n", 6) || !strncmp(read_buffer, "/quit\n", 6))
+		{
+			std::cout << "Client_FD[" << event.data.fd << "] left the server" << std::endl;
+			close (event.data.fd);
+		}
+	}
+	return (bytes_read);
+}
+
 void	Server::launch()
 {
 	struct epoll_event	event;
 	struct epoll_event *events ;
-	char read_buffer[READ_SIZE + 1];
-	ssize_t	bytes_read;
+
 	int	event_count;
 	int	i;
 
@@ -53,12 +72,6 @@ void	Server::launch()
 	_epollfd = epoll_create1(0);
 	if (_epollfd == -1)
 		return ;
-	if (epoll_add_fd(0, EPOLLIN, event) == -1)
-	{
-		std::cerr << "Failed to add file descriptor to epoll" << std::endl;
-		close(_epollfd);
-		return ;
-	}
 	if (epoll_add_fd(_sockfd, EPOLLIN, event) == -1)
 	{
 		std::cerr << "Failed to add file descriptor to epoll" << std::endl;
@@ -86,28 +99,18 @@ void	Server::launch()
 			if (events[i].data.fd == _sockfd)
 			{
 				if (new_connection(event) == -1)
+				{
+					_running = 0;
 					break ;
+				}
 				std::cout << "Client_FD[" << event.data.fd << "] connected" << std::endl;
 			}
 			else // is a READ msg
 			{
-				bytes_read = recv(events[i].data.fd, read_buffer, READ_SIZE, MSG_DONTWAIT);
-				if (bytes_read == -1)
+				if (ser_recv(events[i]) == -1)
 				{
-					// program is stuck here when recv from fd 0
-						std::cout << errno << " errno" << std::endl;
-						break ;
-				}
-				else
-				{
-					read_buffer[bytes_read] = '\0';
-					std::cout << bytes_read << " bytes read" << std::endl;
-					std::cout << "Client_FD[" << events[i].data.fd << "] wrote'" << read_buffer << "'" << std::endl;
-					if(!strncmp(read_buffer, "/QUIT\n", 6) || !strncmp(read_buffer, "/quit\n", 6))
-					{
-						std::cout << "Client_FD[" << events[i].data.fd << "] left the server." << std::endl;
-						close (events[i].data.fd);
-					}
+					_running = 0;
+					break ;
 				}
 			}
 			i++;

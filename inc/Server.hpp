@@ -35,6 +35,7 @@ class Server
 
 	int	epoll_add_fd(int, int, struct epoll_event&);
 	int	new_connection(struct epoll_event&);
+	ssize_t	ser_recv(struct epoll_event&);
 	public:
 	~Server();
 	Server(std::string, std::string);
