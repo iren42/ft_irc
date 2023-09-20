@@ -18,6 +18,9 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include <vector>
+#include <signal.h>
+
+
 #include "Client.hpp"
 
 #define MAX_EVENTS 64
@@ -25,6 +28,7 @@
 
 
 #define SUCCESS 1
+extern bool running;
 
 class Server
 {
@@ -32,7 +36,7 @@ private:
 	int _sockfd;
 	int _epollfd;
 	int _port;
-	int _running;
+
 	std::string _pw;
 	std::map<std::string, void (Server::*)(Client *, std::vector<std::string>)> _map_cmd;
 
@@ -43,6 +47,7 @@ private:
 	int epoll_add_fd(int, int, struct epoll_event &);
 	int new_connection(struct epoll_event &);
 	ssize_t ser_recv(struct epoll_event &);
+
 
 	void init_map_action();
 	void parse_action(std::string s, Client *pClient);

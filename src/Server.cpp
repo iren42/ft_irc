@@ -11,7 +11,7 @@ Server::Server(int port, std::string pw) : _port(port), _pw(pw)
 {
 	std::cout << "Server constructor called" << std::endl;
 	init_map_action();
-	_running = 1;
+	running = 1;
 }
 
 int Server::epoll_add_fd(int fd, int event_type, struct epoll_event &event)
@@ -75,6 +75,13 @@ ssize_t Server::ser_recv(struct epoll_event &event)
 	return (bytes_read);
 }
 
+void	handleSig(int sigint)
+{
+	std::cout << std::endl << "Exsiting server..." << std::endl;
+	if (sigint == SIGINT)
+		running = false;
+}
+
 void Server::launch()
 {
 	struct epoll_event event;
@@ -102,7 +109,7 @@ void Server::launch()
 		close(_epollfd);
 		return;
 	}
-	while (_running)
+	while (running)
 	{
 		std::cout << "Polling for input..." << std::endl;
 		event_count = epoll_wait(_epollfd, events, MAX_EVENTS, -1);
@@ -118,7 +125,7 @@ void Server::launch()
 			{
 				if (new_connection(event) == -1)
 				{
-					_running = 0;
+					running = 0;
 					break;
 				}
 				std::cout << "Client_FD[" << event.data.fd << "] connected"
@@ -127,7 +134,7 @@ void Server::launch()
 			{
 				if (ser_recv(events[i]) == -1)
 				{
-					_running = 0;
+					running = 0;
 					break;
 				}
 			}
@@ -140,13 +147,6 @@ void Server::launch()
 
 	if (close(_sockfd))
 		throw std::runtime_error("failed to close socket file descriptor");
-}
-
-void	handleSig(int sigint)
-{
-	std::cout << std::endl << "Exsiting server..." << std::endl;
-	if (sigint == SIGINT)
-		_running = false;
 }
 
 void	Server::generate_socket()
