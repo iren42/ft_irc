@@ -14,6 +14,7 @@
 #include <fcntl.h>
 
 #include <arpa/inet.h>
+#include <errno.h>
 
 #define MAX_EVENTS 64
 #define READ_SIZE 10

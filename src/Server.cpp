@@ -10,7 +10,6 @@ Server::~Server()
 Server::Server(int port, std::string pw) : _port(port), _pw(pw)
 {
 	std::cout << "Server constructor called" << std::endl;
-	generate_socket();
 	_running = 1;
 }
 
@@ -124,6 +123,8 @@ void	Server::launch()
 	if (close(_epollfd)) {
 		std::cerr << "Failed to close epoll file descriptor" << std::endl;
 	}
+	if (close(_sockfd))
+		throw std::runtime_error("failed to close socket file descriptor");
 }
 void	Server::generate_socket()
 {
@@ -136,10 +137,10 @@ void	Server::generate_socket()
     char sin_zero[8];           // Remplissage pour alignement mémoire}; */
 
 	//creation de la socket
-	_sock_fd = socket(AF_INET, SOCK_STREAM, 0); // AF_INET -> on utilise IPv4, SOCK_STREAM -> socket de type flux (TCP), 0 pour mettre le protocole par defaut (IPv4)
-	if (_sock_fd == -1) {
+	_sockfd = socket(AF_INET, SOCK_STREAM, 0); // AF_INET -> on utilise IPv4, SOCK_STREAM -> socket de type flux (TCP), 0 pour mettre le protocole par defaut (IPv4)
+	if (_sockfd == -1) {
 		throw std::runtime_error("Error while generating a socket");}
-	if (fcntl(_sock_fd, F_SETFL, O_NONBLOCK) < 0) { //fcntl fonction modifiant les attribut socket, F_SETFL pour set un mode, O_NONBLOCK pour definir le mode a set (non bloquant)
+	if (fcntl(_sockfd, F_SETFL, O_NONBLOCK) < 0) { //fcntl fonction modifiant les attribut socket, F_SETFL pour set un mode, O_NONBLOCK pour definir le mode a set (non bloquant)
 		throw std::runtime_error("Error while setting spcket to non-blocking mode");}
 
 	//initialisation de la structure sockaddr_in pour definir les parametre de l'adresse du Serveur
@@ -148,10 +149,10 @@ void	Server::generate_socket()
 	_sock_serv.sin_port = htons(_port); //on convertit le port en ordre octet réseau
 
 	//liage de la socket à l'adresse et au port
-	if (bind(_sock_fd, (struct sockaddr*) &_sock_serv, sizeof(_sock_serv)) == -1){
+	if (bind(_sockfd, (struct sockaddr*) &_sock_serv, sizeof(_sock_serv)) == -1){
 		throw std::runtime_error("Error While binding socket");} //bind() lie la socket a l'adresse et au port spécifié, msg si Erreur
 
-	if (listen(_sock_fd, _sock_serv.sin_port) < 0) {
+	if (listen(_sockfd, _sock_serv.sin_port) < 0) {
 		throw std::runtime_error("Error while putting the socket in listening mode");}
 
 	std::cout << "Server socket has been generated\n";
