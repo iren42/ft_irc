@@ -41,7 +41,7 @@ private:
 
 	std::string _pw;
 	std::map<std::string, void (Server::*)(Client *, std::vector<std::string>)> _map_cmd;
-
+    std::map<int, Client*> _map_client;
 
 	Server(const Server &);
 	Server &operator=(const Server &);

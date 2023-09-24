@@ -1,12 +1,13 @@
 //
 // Created by d420d4 on 15/09/23.
 //
+#include <sys/socket.h>
 #include "Client.hpp"
 #include "Colors.hpp"
 
 Client::Client() : _fd(-1) {}
 
-Client::Client(std::string hostname) : _hostname(hostname),_fd(-1) {}
+Client::Client(std::string hostname, int fd) : _hostname(hostname),_fd(fd) {}
 
 Client::Client(const Client &client) {
     _nickname = client._nickname;
@@ -73,7 +74,11 @@ void Client::setFd(int fd) {
 }
 
 void Client::send_msg(std::string msg) {
-    (void) msg;
+
+    std::string msg2 = msg + "\r\n";
+
+    if (send(_fd, msg2.c_str(), msg2.length(), 0) < 0)
+        throw std::runtime_error("Error while sending message to client.");
 }
 
 std::ostream &operator<<(std::ostream &outFile, Client const &client) {

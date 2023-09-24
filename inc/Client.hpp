@@ -18,7 +18,7 @@ private:
     Client();
 
 public:
-    Client(std::string hostname);
+    Client(std::string hostname, int fd);
     Client(const Client &client);
     Client &operator=(const Client &client);
     virtual ~Client();
