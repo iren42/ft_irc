@@ -36,7 +36,8 @@ void Server::parse_action(std::string message, Client *client)
 			motActuel.clear();
 		}
 
-	if (!motActuel.empty()) arguments.push_back(motActuel);
+	if (!motActuel.empty())
+		arguments.push_back(motActuel);
 
 
 	if (_map_cmd.find(firstWord) != _map_cmd.end())

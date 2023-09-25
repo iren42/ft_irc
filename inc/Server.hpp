@@ -75,6 +75,7 @@ public:
 
 	void launch();
 	void generate_socket();
+	void handle_client(int client_fd);
 };
 
 #endif
