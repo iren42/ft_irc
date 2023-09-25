@@ -39,9 +39,9 @@ int Server::new_connection(struct epoll_event &event) {
     flags |= O_NONBLOCK;
     fcntl(infd, F_SETFL, flags);
 
-    char hostname[128];
-    if (getnameinfo((struct sockaddr *) &in_addr, sizeof(in_addr), hostname, 100, NULL, 0, NI_NUMERICSERV) != 0)
-        throw std::runtime_error("Error while getting hostname on new client.");
+    char hostname[128] = "hostname";
+ //   if (getnameinfo((struct sockaddr *) &in_addr, sizeof(in_addr), hostname, 100, NULL, 0, NI_NUMERICSERV) != 0)
+   //     throw std::runtime_error("Error while getting hostname on new client.");
 
     Client *client = new Client(hostname, infd);
 
@@ -56,8 +56,10 @@ ssize_t Server::ser_recv(struct epoll_event &event) {
     ssize_t bytes_read;
 
     bytes_read = recv(event.data.fd, read_buffer, READ_SIZE, MSG_DONTWAIT);
-    if (bytes_read != -1) {
+    if (bytes_read != -1)
+	{
         read_buffer[bytes_read] = '\0';
+		std::cout << "read buf= " << read_buffer << std::endl;
         if (bytes_read > 0 && read_buffer[bytes_read - 1] == '\n')
             read_buffer[bytes_read - 1] = '\0';
 
