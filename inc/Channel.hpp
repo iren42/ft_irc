@@ -19,13 +19,20 @@ private:
     std::vector<Client *> _ops;
 
 public:
+
+    Channel(std::string name, Client *creator);
+    Channel(const Channel &client);
+    Channel &operator=(const Channel &client);
+    virtual ~Channel();
+
+
     const std::string &getName() const;
 
     const std::string &getTopic() const;
 
-    bool is_client(const Client &client) const;
+    bool is_client(const Client *client) const;
 
-    bool is_op(const Client &client) const;
+    bool is_op(const Client *client) const;
 
     size_t get_nb_clients() const;
 
@@ -35,13 +42,13 @@ public:
 
     void setTopic(const std::string &topic);
 
-    void add_client(Client &client);
+    void add_client(Client *client);
 
-    void add_op(Client &client);
+    void add_op(Client *client);
 
-    void remove_client(Client &client);
+    void remove_client(Client *client);
 
-    void remove_op(Client &client);
+    void remove_op(Client *client);
 
 
 };

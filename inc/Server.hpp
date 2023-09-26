@@ -24,6 +24,7 @@ class Server;
 
 
 #include "Client.hpp"
+#include "Channel.hpp"
 
 #define MAX_EVENTS 64
 #define READ_SIZE 10
@@ -42,6 +43,7 @@ private:
 	std::string _pw;
 	std::map<std::string, void (Server::*)(Client *, std::vector<std::string>)> _map_cmd;
     std::map<int, Client*> _map_client;
+    std::map<std::string, Channel*> _map_channel;
 
 	Server(const Server &);
 	Server &operator=(const Server &);
