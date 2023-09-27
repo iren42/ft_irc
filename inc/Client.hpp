@@ -7,6 +7,7 @@
 #include <iostream>
 #include <string>
 class	Server;
+
 class Client {
 private:
   std::string _nickname;
@@ -15,6 +16,7 @@ private:
   std::string _username;
   int _fd;
   Server *_serv;
+   
 
   Client();
 

@@ -33,6 +33,8 @@ class Server;
 extern int running;
 
 typedef std::map<int, Client*> CLIENTS;
+typedef std::map<std::string, Channel*> CHANNELS;
+
 class Server
 {
 private:
@@ -77,7 +79,8 @@ public:
 
 	void launch();
 	void generate_socket();
-	std::map<int, Client*> getClients();
+	CLIENTS getClients() const;
+  CHANNELS  getChannels() const;
 };
 
 #endif

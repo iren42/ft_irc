@@ -15,10 +15,16 @@ Server::Server(int port, std::string pw) : _port(port), _pw(pw) {
     running = 1;
 }
 
-	std::map<int, Client*> Server::getClients()
+CLIENTS Server::getClients() const
 {
 	return (_map_client);
 }
+
+CHANNELS  Server::getChannels() const
+{
+  return (_map_channel);
+}
+
 int Server::epoll_add_fd(int fd, int event_type, struct epoll_event &event) {
     event.data.fd = fd;
     event.events = event_type;
