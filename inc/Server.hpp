@@ -26,12 +26,12 @@ class Server;
 #include "Client.hpp"
 
 #define MAX_EVENTS 64
-#define READ_SIZE 10
-
+#define READ_SIZE 64
 
 #define SUCCESS 1
 extern int running;
 
+typedef std::map<int, Client*> CLIENTS;
 class Server
 {
 private:
@@ -75,6 +75,7 @@ public:
 
 	void launch();
 	void generate_socket();
+	std::map<int, Client*> getClients();
 };
 
 #endif
