@@ -9,10 +9,15 @@ Server::~Server() {
 }
 
 
-Server::Server(int port, std::string pw) : _port(port), _pw(pw) {
+Server::Server(int port, std::string pass) : _port(port), _pass(pass) {
     std::cout << "Server constructor called" << std::endl;
     init_map_action();
     running = 1;
+}
+
+const std::string& Server::getPass() const
+{
+  return (_pass);
 }
 
 CLIENTS Server::getClients() const

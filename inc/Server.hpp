@@ -42,7 +42,7 @@ private:
 	int _epollfd;
 	int _port;
 
-	std::string _pw;
+	std::string _pass;
 	std::map<std::string, void (Server::*)(Client *, std::vector<std::string>)> _map_cmd;
     std::map<int, Client*> _map_client;
     std::map<std::string, Channel*> _map_channel;
@@ -58,6 +58,7 @@ private:
 	void init_map_action();
 	void parse_action(std::string s, Client *pClient);
 
+	void do_action_pass(Client *, std::vector<std::string>);
 	void do_action_nick(Client *, std::vector<std::string>);
 	void do_action_username(Client *, std::vector<std::string>);
 	void do_action_join(Client *, std::vector<std::string>);
@@ -81,6 +82,7 @@ public:
 	void generate_socket();
 	CLIENTS getClients() const;
   CHANNELS  getChannels() const;
+  const std::string& getPass() const;
 };
 
 #endif

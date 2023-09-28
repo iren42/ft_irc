@@ -2,6 +2,7 @@
 
 void Server::init_map_action()
 {
+	_map_cmd["/pass"] = &Server::do_action_pass;
 	_map_cmd["/nick"] = &Server::do_action_nick;
 	_map_cmd["/username"] = &Server::do_action_username;
 	_map_cmd["/join"] = &Server::do_action_join;
@@ -19,7 +20,6 @@ void Server::init_map_action()
 }
 void Server::parse_action(std::string message, Client *client)
 {
-	std::cout << "msg in parse()= " << message << std::endl;
 	std::string firstWord = message.substr(0, message.find(' '));
 	for (int i = 0; i < firstWord.length(); i++)
 		firstWord.at(i) = (char) std::tolower(firstWord.at(i));
@@ -40,7 +40,6 @@ void Server::parse_action(std::string message, Client *client)
 	if (!motActuel.empty())
 		arguments.push_back(motActuel);
 	
-	std::cout << "firstWord= " << firstWord << std::endl;
 	if (_map_cmd.find(firstWord) != _map_cmd.end())
 		((this->*_map_cmd[firstWord]))(client, arguments);
 	else

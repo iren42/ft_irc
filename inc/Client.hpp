@@ -16,6 +16,7 @@ private:
   std::string _username;
   int _fd;
   Server *_serv;
+  bool  _verified;
    
 
   Client();
@@ -32,11 +33,13 @@ public:
   const std::string &getUsername() const;
   int getFd() const;
   Server* getServer() const;
+  bool  isVerified() const;
 
   void setNickname(const std::string &nickname);
   void setRealname(const std::string &realname);
   void setHostname(const std::string &hostname);
   void setUsername(const std::string &hostname);
+  void setVerified(bool);
   void setFd(int fd);
 
   void send_msg(std::string msg);

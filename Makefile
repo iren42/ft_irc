@@ -22,6 +22,7 @@ SRC			= main.cpp \
 				actions/action_kick.cpp\
 				actions/action_mode.cpp\
 				actions/action_topic.cpp\
+				actions/action_pass.cpp\
 
 
 
