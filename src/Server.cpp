@@ -87,19 +87,6 @@ void handleSig(int sigint) {
         running = false;
 }
 
-void	handle_client(int client_fd) {
-	char tmp[100] = {0};
-	int r = recv(client_fd, tmp, 100, 0); //recevoir jusque 100 octet de données de Client_fd
-	std::cout << "recv = '" << tmp << "'" << std::endl;
-	if (r == -1) {
-		perror("Error while receiving data.")
-		return;}
-	else if (r == 0) { //si r = 0 alors il n'ya pas/plus de connexion
-		client_disconnect(client_fd, _epollfd);i //CLIENT DISCONNEXION
-		return;}
-	_clientsMap[]
-}
-
 void Server::launch() {
     struct epoll_event event;
     struct epoll_event *events;

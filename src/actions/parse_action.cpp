@@ -17,28 +17,32 @@ void Server::init_map_action()
 	_map_cmd["topic"] = &Server::do_action_topic;
 	_map_cmd["mode"] = &Server::do_action_mode;
 }
-
-/*void	Server::handle_client(int client_fd)
+/*
+std::string Server::handle_client(int client_fd)
 {
+	std::string client_msg;
 	char tmp[100] = {0};
-	int r = recv(client_fd, tmp, 100, 0); //recevoir jusque 100 octet de données de Client_fd
-	std::cout << "recv = '" << tmp << "'" << std::endl;
+
+	int r = recv(client_fd,tmp, 100, 0); //recevoir jusque 100octet de donnée de ckient_fd
+	std::cout << "recv = '" tmp = "'" << std::endl;
 	if (r == -1) {
-		perror("Error while receiving data.")
-		return;}
-	else if (r == 0) { //si r = 0 alors il n'ya pas/plus de connexion
-		client_disconnect(client_fd, _epollfd); //CLIENT DISCONNEXION
-		return;}
-	_map_client[client_fd]->getMsg().append(tmp, r);//ajoute les données recue 'tmp' a r.
-	size_t newLine = _map_client[client_fd]->getMs().find("\r\n");
-	if (newLine == std::string::npos) { //npos = une constante speciale qui dit que find n'a pas trouvé ce qu'il cherchait
-		newline = _map_client[client_fd]->getMsg().find("\n");}
-	if (newLine !=std::string::npos){
-		std::string message = _map_client[client_fd]->getMsg().substr(0, newLine);
-		execMsg(_map_client[client_fd], message);}
-	
-	//supprimer la partie du message traitée
+		perror("Error while receiving data.");
+		return std::string();}
+	else if (r == 0) {
+		std::cout << "client disconnection" << std::endl;} //GERER LA DISCONNEXION Client
+		return std::string();}
+
+		client_msg.append(tmp, r);
+
+		//recherche de la premiere occurence de "\r\n" ou "\n"
+		size_t newline = client_msg.find("\r\n");
+		if (newline == std::string::npos) { //npos = find n'a pas trouvé ce qu'il cherchait
+			newline = client_msg.find("\n");}
+		//si une newline est trouvée dans le tampon de msg = msg valide
+		if (newline != std::string::npos) {
+			return (client_msg);}
 }*/
+/*je passe une string vide quand il y a une erreur de recv*/
 
 void Server::parse_action(std::string message, Client *client)
 {
