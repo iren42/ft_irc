@@ -17,31 +17,34 @@ void Server::init_map_action()
 	_map_cmd["topic"] = &Server::do_action_topic;
 	_map_cmd["mode"] = &Server::do_action_mode;
 }
-/*
+
 std::string Server::handle_client(int client_fd)
 {
-	std::string client_msg;
+	if (_swtch == 0)	{
+		_msg.clear();}
 	char tmp[100] = {0};
-
-	int r = recv(client_fd,tmp, 100, 0); //recevoir jusque 100octet de donnée de ckient_fd
-	std::cout << "recv = '" tmp = "'" << std::endl;
+	int r = recv(client_fd, tmp, 100, 0); //recevoir jusque 100octet de donnée de ckient_fd
+	std::cout << "recv = '" << tmp << "'" << std::endl;
 	if (r == -1) {
 		perror("Error while receiving data.");
 		return std::string();}
 	else if (r == 0) {
-		std::cout << "client disconnection" << std::endl;} //GERER LA DISCONNEXION Client
+		std::cout << "client disconnection" << std::endl; //GERER LA DISCONNEXION Client
 		return std::string();}
-
-		client_msg.append(tmp, r);
+		_swtch = 1;
+		_msg.append(tmp, r);
 
 		//recherche de la premiere occurence de "\r\n" ou "\n"
-		size_t newline = client_msg.find("\r\n");
+		size_t newline = this->_msg.find("\r\n");
 		if (newline == std::string::npos) { //npos = find n'a pas trouvé ce qu'il cherchait
-			newline = client_msg.find("\n");}
+			newline = _msg.find("\n");}
 		//si une newline est trouvée dans le tampon de msg = msg valide
 		if (newline != std::string::npos) {
-			return (client_msg);}
-}*/
+			_swtch = 0;
+			return (_msg);}
+		return std::string();
+		
+}
 /*je passe une string vide quand il y a une erreur de recv*/
 
 void Server::parse_action(std::string message, Client *client)

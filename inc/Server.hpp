@@ -26,7 +26,7 @@ class Server;
 #include "Client.hpp"
 
 #define MAX_EVENTS 64
-#define READ_SIZE 10
+#define READ_SIZE 100
 
 
 #define SUCCESS 1
@@ -39,10 +39,11 @@ private:
 	int _epollfd;
 	int _port;
 
+	std::string _msg;
 	std::string _pw;
+	int	_swtch; //0 = nv message, 1 =message en cours;
 	std::map<std::string, void (Server::*)(Client *, std::vector<std::string>)> _map_cmd;
     std::map<int, Client*> _map_client;
-
 	Server(const Server &);
 	Server &operator=(const Server &);
 
@@ -75,7 +76,7 @@ public:
 
 	void launch();
 	void generate_socket();
-	void handle_client(int client_fd);
+	std::string handle_client(int client_fd);
 };
 
 #endif

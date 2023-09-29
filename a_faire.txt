@@ -1,9 +1,1 @@
-recup le code de pierre sur le main
-
-->reprendre le chat gpt ->_map_client existe bien
-
-faire control D avant parsing
-mettre le reste de la ligne dans un buffer jusque "\n" ou "\r"
-regarder ce que sont les parametres de parse_action
-rendre le message entier a "actions/parse_action.cpp"
-actions/parse_action.cpp
+gerer la deconnexion du client

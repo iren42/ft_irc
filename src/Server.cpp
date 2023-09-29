@@ -1,5 +1,6 @@
 #include <netdb.h>
 #include "Server.hpp"
+#include "Client.hpp"
 
 int running;
 
@@ -13,6 +14,7 @@ Server::Server(int port, std::string pw) : _port(port), _pw(pw) {
     std::cout << "Server constructor called" << std::endl;
     init_map_action();
     running = 1;
+	_swtch = 0;
 }
 
 int Server::epoll_add_fd(int fd, int event_type, struct epoll_event &event) {
@@ -22,7 +24,7 @@ int Server::epoll_add_fd(int fd, int event_type, struct epoll_event &event) {
 }
 
 int Server::new_connection(struct epoll_event &event) {
-    struct sockaddr in_addr;
+    struct sockaddr in_addr = {AF_INET, 0, 0, 0};
     socklen_t in_len;
     int infd;
     int flags;
@@ -40,8 +42,10 @@ int Server::new_connection(struct epoll_event &event) {
     fcntl(infd, F_SETFL, flags);
 
     char hostname[128];
-    if (getnameinfo((struct sockaddr *) &in_addr, sizeof(in_addr), hostname, 100, NULL, 0, NI_NUMERICSERV) != 0)
-        throw std::runtime_error("Error while getting hostname on new client.");
+	int returngetname;
+    if ((returngetname = getnameinfo((struct sockaddr *) &in_addr, sizeof(in_addr), hostname, 100, NULL, 0, NI_NUMERICSERV)) != 0){
+		std::cout << returngetname << std::endl;
+        throw std::runtime_error("Error while getting hostname on new client.");}
 
     Client *client = new Client(hostname, infd);
 
@@ -50,22 +54,37 @@ int Server::new_connection(struct epoll_event &event) {
 
     return (epoll_add_fd(infd, EPOLLIN, event));
 }
-
+/*
 ssize_t Server::ser_recv(struct epoll_event &event) {
-    char read_buffer[READ_SIZE + 1];
+//    char read_buffer[READ_SIZE + 1];
     ssize_t bytes_read;
 
-    bytes_read = recv(event.data.fd, read_buffer, READ_SIZE, MSG_DONTWAIT);
-    if (bytes_read != -1) {
+    bytes_read = recv(event.data.fd,_read_buffer, READ_SIZE, MSG_DONTWAIT);
+	std::cout << "recv = '" << _read_buffer << "'" << std::endl;
+	if (bytes_read == -1) {
+		perror("Error while receiving data.");
+		return (0);}
+		else if (bytes_read == 0) {
+			std::cout << "client disconnection" << std::endl;
+			return (0);} //GERER LA DISCONNECTION Client
+		
+		_read_buffer.append(_msg, bytes_read);
+
+		size_t newline = _read_buffer.find("\r\n");
+		if (newline == std::string::npos) {
+			newline = _read_buffer.find("\n");}
+		if (newline == std::string::npos) {
+			return (0);}
+
+	    if (newline != std::string::npos) {
         read_buffer[bytes_read] = '\0';
         if (bytes_read > 0 && read_buffer[bytes_read - 1] == '\n')
             read_buffer[bytes_read - 1] = '\0';
 
-        std::string message = read_buffer;
 
 
         Client *client = _map_client[event.data.fd];
-        parse_action(message, client);
+        parse_action(_msg, client);
 
         std::cout << bytes_read << " bytes read" << std::endl;
         std::cout << "Client_FD[" << event.data.fd << "] wrote'" << read_buffer
@@ -79,6 +98,40 @@ ssize_t Server::ser_recv(struct epoll_event &event) {
         }
     }
     return (bytes_read);
+}
+*/
+
+ssize_t Server::ser_recv(struct epoll_event &event) {
+  /*  char read_buffer[READ_SIZE + 1];
+    ssize_t bytes_read;
+
+    bytes_read = recv(event.data.fd, read_buffer, READ_SIZE, MSG_DONTWAIT);
+    if (bytes_read != -1)
+	{
+        read_buffer[bytes_read] = '\0';
+		std::cout << "read buf= " << read_buffer << std::endl;
+        if (bytes_read > 0 && read_buffer[bytes_read - 1] == '\n')
+            read_buffer[bytes_read - 1] = '\0';
+
+        std::string message = read_buffer;*/
+		std::string message = handle_client(event.data.fd);
+		if (!message[0]){
+			return (0);}
+        Client *client = _map_client[event.data.fd];
+        parse_action(message, client);
+
+//        std::cout << bytes_read << " bytes read" << std::endl;
+        std::cout << "Client_FD[" << event.data.fd << "] wrote'" << message << "'" << std::endl;
+
+        if (!strncmp(message.c_str(), "/QUIT\n", 6) ||
+            !strncmp(message.c_str(), "/quit\n", 6)) {
+            std::cout << "Client_FD[" << event.data.fd << "] left the server"
+                      << std::endl;
+            close(event.data.fd);
+        }
+
+	return 0;
+//    return (bytes_read);
 }
 
 void handleSig(int sigint) {
@@ -111,6 +164,7 @@ void Server::launch() {
         close(_epollfd);
         return;
     }
+	_swtch = 0;
     while (running) {
         std::cout << "Polling for input..." << std::endl;
         event_count = epoll_wait(_epollfd, events, MAX_EVENTS, -1);
