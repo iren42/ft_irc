@@ -76,7 +76,8 @@ public:
 
 	void launch();
 	void generate_socket();
-	std::string handle_client(int client_fd);
+	void client_disconnect(Client *client);
+	std::string handle_client(int client_fd, Client *client);
 };
 
 #endif

@@ -54,73 +54,14 @@ int Server::new_connection(struct epoll_event &event) {
 
     return (epoll_add_fd(infd, EPOLLIN, event));
 }
-/*
+
 ssize_t Server::ser_recv(struct epoll_event &event) {
-//    char read_buffer[READ_SIZE + 1];
-    ssize_t bytes_read;
-
-    bytes_read = recv(event.data.fd,_read_buffer, READ_SIZE, MSG_DONTWAIT);
-	std::cout << "recv = '" << _read_buffer << "'" << std::endl;
-	if (bytes_read == -1) {
-		perror("Error while receiving data.");
-		return (0);}
-		else if (bytes_read == 0) {
-			std::cout << "client disconnection" << std::endl;
-			return (0);} //GERER LA DISCONNECTION Client
-		
-		_read_buffer.append(_msg, bytes_read);
-
-		size_t newline = _read_buffer.find("\r\n");
-		if (newline == std::string::npos) {
-			newline = _read_buffer.find("\n");}
-		if (newline == std::string::npos) {
-			return (0);}
-
-	    if (newline != std::string::npos) {
-        read_buffer[bytes_read] = '\0';
-        if (bytes_read > 0 && read_buffer[bytes_read - 1] == '\n')
-            read_buffer[bytes_read - 1] = '\0';
-
-
-
         Client *client = _map_client[event.data.fd];
-        parse_action(_msg, client);
-
-        std::cout << bytes_read << " bytes read" << std::endl;
-        std::cout << "Client_FD[" << event.data.fd << "] wrote'" << read_buffer
-                  << "'" << std::endl;
-
-        if (!strncmp(read_buffer, "/QUIT\n", 6) ||
-            !strncmp(read_buffer, "/quit\n", 6)) {
-            std::cout << "Client_FD[" << event.data.fd << "] left the server"
-                      << std::endl;
-            close(event.data.fd);
-        }
-    }
-    return (bytes_read);
-}
-*/
-
-ssize_t Server::ser_recv(struct epoll_event &event) {
-  /*  char read_buffer[READ_SIZE + 1];
-    ssize_t bytes_read;
-
-    bytes_read = recv(event.data.fd, read_buffer, READ_SIZE, MSG_DONTWAIT);
-    if (bytes_read != -1)
-	{
-        read_buffer[bytes_read] = '\0';
-		std::cout << "read buf= " << read_buffer << std::endl;
-        if (bytes_read > 0 && read_buffer[bytes_read - 1] == '\n')
-            read_buffer[bytes_read - 1] = '\0';
-
-        std::string message = read_buffer;*/
-		std::string message = handle_client(event.data.fd);
+		std::string message = handle_client(event.data.fd, client);
 		if (!message[0]){
 			return (0);}
-        Client *client = _map_client[event.data.fd];
         parse_action(message, client);
 
-//        std::cout << bytes_read << " bytes read" << std::endl;
         std::cout << "Client_FD[" << event.data.fd << "] wrote'" << message << "'" << std::endl;
 
         if (!strncmp(message.c_str(), "/QUIT\n", 6) ||
@@ -131,7 +72,6 @@ ssize_t Server::ser_recv(struct epoll_event &event) {
         }
 
 	return 0;
-//    return (bytes_read);
 }
 
 void handleSig(int sigint) {
@@ -201,36 +141,26 @@ void Server::launch() {
 
 void Server::generate_socket() {
     struct sockaddr_in _sock_serv;
-    /*
-    struct sockaddr_in {
-    short sin_family;           // Famille d'adresses (AF_INET pour IPv4)
-    unsigned short sin_port;    // Numéro de port en ordre octet réseau (big-endian)
-    struct in_addr sin_addr;    // Adresse IP en format binaire
-    char sin_zero[8];           // Remplissage pour alignement mémoire}; */
-
-    //creation de la socket
     _sockfd = socket(AF_INET, SOCK_STREAM,
-                     0); // AF_INET -> on utilise IPv4, SOCK_STREAM -> socket de type flux (TCP), 0 pour mettre le protocole par defaut (IPv4)
+                     0);
     if (_sockfd == -1) {
         throw std::runtime_error("Error while generating a socket");
     }
     if (fcntl(_sockfd, F_SETFL, O_NONBLOCK) <
-        0) { //fcntl fonction modifiant les attribut socket, F_SETFL pour set un mode, O_NONBLOCK pour definir le mode a set (non bloquant)
+        0) {
         throw std::runtime_error(
                 "Error while setting spcket to non-blocking mode");
     }
 
-    //initialisation de la structure sockaddr_in pour definir les parametre de l'adresse du Serveur
-    _sock_serv.sin_family = AF_INET; //sock utilise IPv4
-    _sock_serv.sin_addr.s_addr = INADDR_ANY; //le serveur ecoutera sur toutes les interfaces reseauc disponibles
+    _sock_serv.sin_family = AF_INET;
+    _sock_serv.sin_addr.s_addr = INADDR_ANY;
     _sock_serv.sin_port = htons(
-            _port); //on convertit le port en ordre octet réseau
+            _port);
 
-    //liage de la socket à l'adresse et au port
     if (bind(_sockfd, (struct sockaddr *) &_sock_serv, sizeof(_sock_serv)) ==
         -1) {
         throw std::runtime_error("Error While binding socket");
-    } //bind() lie la socket a l'adresse et au port spécifié, msg si Erreur
+    }
 
     if (listen(_sockfd, _sock_serv.sin_port) < 0) {
         throw std::runtime_error(

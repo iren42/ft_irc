@@ -18,7 +18,18 @@ void Server::init_map_action()
 	_map_cmd["mode"] = &Server::do_action_mode;
 }
 
-std::string Server::handle_client(int client_fd)
+void Server::client_disconnect(Client *client)
+{
+	int fd = client->getFd();
+	epoll_ctl(_epollfd, EPOLL_CTL_DEL, fd, 0); //retrait du client de l'evenement epoll_ctl
+	delete client;
+	_map_client.erase(fd);
+	close(fd);
+	std::cout << "Client [" << fd << "] disconnected." << std::endl;
+	return;
+}
+
+std::string Server::handle_client(int client_fd, Client *client)
 {
 	if (_swtch == 0)	{
 		_msg.clear();}
@@ -30,6 +41,7 @@ std::string Server::handle_client(int client_fd)
 		return std::string();}
 	else if (r == 0) {
 		std::cout << "client disconnection" << std::endl; //GERER LA DISCONNEXION Client
+		client_disconnect(client);
 		return std::string();}
 		_swtch = 1;
 		_msg.append(tmp, r);
@@ -45,7 +57,6 @@ std::string Server::handle_client(int client_fd)
 		return std::string();
 		
 }
-/*je passe une string vide quand il y a une erreur de recv*/
 
 void Server::parse_action(std::string message, Client *client)
 {
