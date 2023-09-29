@@ -1,5 +1,6 @@
 #include <netdb.h>
 #include "Server.hpp"
+#include "Client.hpp"
 
 int running;
 
@@ -13,6 +14,7 @@ Server::Server(int port, std::string pw) : _port(port), _pw(pw) {
     std::cout << "Server constructor called" << std::endl;
     init_map_action();
     running = 1;
+	_swtch = 0;
 }
 
 	std::map<int, Client*> Server::getClients()
@@ -26,7 +28,7 @@ int Server::epoll_add_fd(int fd, int event_type, struct epoll_event &event) {
 }
 
 int Server::new_connection(struct epoll_event &event) {
-    struct sockaddr in_addr;
+    struct sockaddr in_addr = {AF_INET, 0, 0, 0};
     socklen_t in_len;
     int infd;
     int flags;
@@ -43,11 +45,13 @@ int Server::new_connection(struct epoll_event &event) {
     flags |= O_NONBLOCK;
     fcntl(infd, F_SETFL, flags);
 
-    char hostname[128] = "hostname";
- //   if (getnameinfo((struct sockaddr *) &in_addr, sizeof(in_addr), hostname, 100, NULL, 0, NI_NUMERICSERV) != 0)
-   //     throw std::runtime_error("Error while getting hostname on new client.");
+    char hostname[128];
+	int returngetname;
+    if ((returngetname = getnameinfo((struct sockaddr *) &in_addr, sizeof(in_addr), hostname, 100, NULL, 0, NI_NUMERICSERV)) != 0){
+		std::cout << returngetname << std::endl;
+        throw std::runtime_error("Error while getting hostname on new client.");}
 
-    Client *client = new Client(hostname, infd, this);
+    Client *client = new Client(hostname, infd);
 
     std::cout << "New client : " << hostname << " ; " << infd << std::endl;
     _map_client[infd] = client;
@@ -56,35 +60,22 @@ int Server::new_connection(struct epoll_event &event) {
 }
 
 ssize_t Server::ser_recv(struct epoll_event &event) {
-    char read_buffer[READ_SIZE + 1];
-    ssize_t bytes_read;
-
-    bytes_read = recv(event.data.fd, read_buffer, READ_SIZE, MSG_DONTWAIT);
-    if (bytes_read != -1)
-	{
-        read_buffer[bytes_read] = '\0';
-		std::cout << "read buf= " << read_buffer << std::endl;
-        if (bytes_read > 0 && read_buffer[bytes_read - 1] == '\n')
-            read_buffer[bytes_read - 1] = '\0';
-
-        std::string message = read_buffer;
-
-
         Client *client = _map_client[event.data.fd];
+		std::string message = handle_client(event.data.fd, client);
+		if (!message[0]){
+			return (0);}
         parse_action(message, client);
 
-        std::cout << bytes_read << " bytes read" << std::endl;
-        std::cout << "Client_FD[" << event.data.fd << "] wrote'" << read_buffer
-                  << "'" << std::endl;
+        std::cout << "Client_FD[" << event.data.fd << "] wrote'" << message << "'" << std::endl;
 
-        if (!strncmp(read_buffer, "/QUIT\n", 6) ||
-            !strncmp(read_buffer, "/quit\n", 6)) {
+        if (!strncmp(message.c_str(), "/QUIT\n", 6) ||
+            !strncmp(message.c_str(), "/quit\n", 6)) {
             std::cout << "Client_FD[" << event.data.fd << "] left the server"
                       << std::endl;
             close(event.data.fd);
         }
-    }
-    return (bytes_read);
+
+	return 0;
 }
 
 void handleSig(int sigint) {
@@ -117,6 +108,7 @@ void Server::launch() {
         close(_epollfd);
         return;
     }
+	_swtch = 0;
     while (running) {
         std::cout << "Polling for input..." << std::endl;
         event_count = epoll_wait(_epollfd, events, MAX_EVENTS, -1);
@@ -163,12 +155,12 @@ void Server::generate_socket() {
 
     //creation de la socket
     _sockfd = socket(AF_INET, SOCK_STREAM,
-                     0); // AF_INET -> on utilise IPv4, SOCK_STREAM -> socket de type flux (TCP), 0 pour mettre le protocole par defaut (IPv4)
+                     0);
     if (_sockfd == -1) {
         throw std::runtime_error("Error while generating a socket");
     }
     if (fcntl(_sockfd, F_SETFL, O_NONBLOCK) <
-        0) { //fcntl fonction modifiant les attribut socket, F_SETFL pour set un mode, O_NONBLOCK pour definir le mode a set (non bloquant)
+        0) {
         throw std::runtime_error(
                 "Error while setting spcket to non-blocking mode");
     }

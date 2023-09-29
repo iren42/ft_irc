@@ -27,7 +27,8 @@ class Server;
 #include "Channel.hpp"
 
 #define MAX_EVENTS 64
-#define READ_SIZE 64
+#define READ_SIZE 100
+
 
 #define SUCCESS 1
 extern int running;
@@ -40,7 +41,9 @@ private:
 	int _epollfd;
 	int _port;
 
+	std::string _msg;
 	std::string _pw;
+	int	_swtch; //0 = nv message, 1 =message en cours;
 	std::map<std::string, void (Server::*)(Client *, std::vector<std::string>)> _map_cmd;
     std::map<int, Client*> _map_client;
     std::map<std::string, Channel*> _map_channel;
@@ -77,6 +80,8 @@ public:
 
 	void launch();
 	void generate_socket();
+	void client_disconnect(Client *client);
+	std::string handle_client(int client_fd, Client *client);
 	std::map<int, Client*> getClients();
 };
 
