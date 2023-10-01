@@ -63,7 +63,7 @@ class Server
     void do_action_username(Client *, std::vector<std::string>);
     void do_action_join(Client *, std::vector<std::string>);
     void do_action_part(Client *, std::vector<std::string>);
-    void do_action_msg(Client *, std::vector<std::string>);
+    void do_action_privmsg(Client *, std::vector<std::string>);
     void do_action_help(Client *, std::vector<std::string>);
     void do_action_quit(Client *, std::vector<std::string>);
     void do_action_list(Client *, std::vector<std::string>);

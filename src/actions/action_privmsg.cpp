@@ -23,25 +23,6 @@ bool  Server::isInMapChannel(std::string s)
   return (false);
 }
 
-// send a message to every client that joined the channel <recipient>
-// TODO send a message only when sender has joined that channel,
-// or if that channel is not in mode -n
-void	Server::msgChannel(Client *sender, std::string recipient, std::vector<std::string> args)
-{
-  // find Channel*
-  CHANNELS::iterator it = _map_channel.find(parseChannel(recipient));
-  if (it != _map_channel.end())
-  {
-    std::vector<Client *> vec =  (((*it).second)->getClients());
-    std::vector<Client *>::iterator ita = vec.begin();
-    while (ita != vec.end())
-    {
-      (*ita)->send_msg("[" + recipient + "] " + sender->getNickname() + ": " + createMsg(args));
-      ita++;
-    }
-  }
-}
-
 // returns an iterator to the element with <nick> on success 
 // returns _map_client.end() on failure
 CLIENTS::iterator Server::findClient(std::string nick)
@@ -58,7 +39,7 @@ CLIENTS::iterator Server::findClient(std::string nick)
   return (it);
 }
 
-// concatenate every string after the '/CMD <recipient>' with a ' '
+// concatenate every string after the '/CMD <target>' with a ' '
 std::string Server::createMsg(std::vector<std::string> args)
 {
   std::string buf;
@@ -66,17 +47,38 @@ std::string Server::createMsg(std::vector<std::string> args)
   ita += 2;
   while (ita != args.end())
   {
-    buf.append(*ita);
-    buf.append(" ");
+    buf.append(*ita + " ");
     ita++;
   }
   return (buf);
 }
 
-// send a message to a Client
-void	Server::msgClient(Client *sender, std::string recipient, std::vector<std::string> args)
+// send a message to every client on channel <target> only when sender joined that channel beforehand
+void	Server::msgChannel(Client *sender, std::string target, std::vector<std::string> args)
 {
-  CLIENTS::iterator receiver = findClient(recipient);
+  CHANNELS::iterator it = _map_channel.find(parseChannel(target));
+  if (it != _map_channel.end())
+  {
+    if ((((*it).second)->is_client(sender)) == false)
+    {
+      sender->send_msg("ERR_CANNOTSENDTOCHAN");
+    }
+    else {
+      std::vector<Client *> vec =  (((*it).second)->getClients());
+      std::vector<Client *>::iterator ita = vec.begin();
+      while (ita != vec.end())
+      {
+        (*ita)->send_msg("[" + target + "] " + sender->getNickname() + ": " + createMsg(args));
+        ita++;
+      }
+    }
+  }
+}
+
+// send a message to a Client
+void	Server::msgClient(Client *sender, std::string target, std::vector<std::string> args)
+{
+  CLIENTS::iterator receiver = findClient(target);
   if (receiver != _map_client.end())
   {
     ((*receiver).second)->send_msg(sender->getNickname() + ": " + createMsg(args));
@@ -86,8 +88,10 @@ void	Server::msgClient(Client *sender, std::string recipient, std::vector<std::s
   }
 }
 
-void Server::do_action_msg(Client *sender, std::vector<std::string> args)
+void Server::do_action_privmsg(Client *sender, std::vector<std::string> args)
 {
+  if (sender->isVerified() == false)
+    return ;
   if (args.size() == 1)
   {
     sender->send_msg("ERR_NORECIPIENT");
@@ -98,7 +102,7 @@ void Server::do_action_msg(Client *sender, std::vector<std::string> args)
   }
   else
   {
-    // case 1: recipient has '#' as the 1st char, it may be an existing channel
+    // case 1: target has '#' as the 1st char, it may be an existing channel
     if (args.at(1).at(0) == '#')
     {
       if (isInMapChannel(args.at(1)))
@@ -109,7 +113,7 @@ void Server::do_action_msg(Client *sender, std::vector<std::string> args)
         sender->send_msg("Nous n'avons pas trouvé le canal : " + args.at(1));
       }
     }
-    // case 2: recipient is a client
+    // case 2: target is a client
     else {
       msgClient(sender, args.at(1), args);
     }

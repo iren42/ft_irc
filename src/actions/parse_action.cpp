@@ -7,7 +7,7 @@ void Server::init_map_action()
 	_map_cmd["/username"] = &Server::do_action_username;
 	_map_cmd["/join"] = &Server::do_action_join;
 	_map_cmd["/part"] = &Server::do_action_part;
-	_map_cmd["/msg"] = &Server::do_action_msg;
+	_map_cmd["/privmsg"] = &Server::do_action_privmsg;
 	_map_cmd["/help"] = &Server::do_action_help;
 	_map_cmd["/quit"] = &Server::do_action_quit;
 	_map_cmd["/list"] = &Server::do_action_list;

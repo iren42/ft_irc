@@ -12,7 +12,7 @@ SRC			= main.cpp \
 				actions/action_username.cpp\
 				actions/action_join.cpp\
 				actions/action_part.cpp\
-				actions/action_msg.cpp\
+				actions/action_privmsg.cpp\
 				actions/action_help.cpp\
 				actions/action_quit.cpp\
 				actions/action_list.cpp\
