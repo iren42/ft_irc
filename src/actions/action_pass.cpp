@@ -7,7 +7,7 @@ void Server::do_action_pass(Client *client, std::vector<std::string> args){
   }
   else
   {
-    if (client->getServer()->getPass() == args.back())
+    if (getPass() == args.back())
     {
       client->setVerified(true);
       client->send_msg("Password verified. You can register your connection, try '/NICK <YourNickname>'");

@@ -46,7 +46,7 @@ $(NAME): $(OBJS)
 	@tput setaf 6
 	@echo "${@}"
 
-	$(CC) -o $@ $(OBJS)
+	@$(CC) -o $@ $(OBJS)
 
 $(OBJDIR)%.o: $(SRCDIR)%.cpp
 	@make create_dir_objs --no-print-directory

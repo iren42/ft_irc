@@ -58,7 +58,7 @@ int Server::new_connection(struct epoll_event &event) {
  //   if (getnameinfo((struct sockaddr *) &in_addr, sizeof(in_addr), hostname, 100, NULL, 0, NI_NUMERICSERV) != 0)
    //     throw std::runtime_error("Error while getting hostname on new client.");
 
-    Client *client = new Client(hostname, infd, this);
+    Client *client = new Client(hostname, infd);
 
     std::cout << "New client : " << hostname << " ; " << infd << std::endl;
     _map_client[infd] = client;

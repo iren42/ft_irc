@@ -4,8 +4,8 @@ void Server::do_action_help(Client *client, std::vector<std::string> args) {
   if (args.size() == 1) {
     client->send_msg(
         "*** List of all IRC commands:\n*** NICK, USER, JOIN, PART, MSG, QUIT, "
-        "LIST, WHOIS,\n*** ME, PASS, KICK, INVITE, TOPIC, MODE, INTRO\nAre you "
-        "a new user? Try '/HELP intro'");
+        "LIST, WHOIS,\n*** ME, PASS, KICK, INVITE, TOPIC, MODE, NAMES, INTRO\n"
+        "Are you a new user? Try '/HELP intro'");
   } else if (args.size() > 2) {
     client->send_msg("Syntax: /HELP [command name]");
     client->send_msg("For example, try '/HELP NICK'");
@@ -22,7 +22,7 @@ void Server::do_action_help(Client *client, std::vector<std::string> args) {
       client->send_msg("Try '/HELP user' or '/HELP nick'");
     } else if (cmd == "nick") {
       client->send_msg("Change the nickname by which you are known.\nNicknames "
-                       "are limited to 9 characters.");
+          "are limited to 9 characters.");
       client->send_msg("Syntax: /NICK <YourNickname>");
     } else if (cmd == "user") {
       client->send_msg(
@@ -44,8 +44,8 @@ void Server::do_action_help(Client *client, std::vector<std::string> args) {
       client->send_msg(
           "Send to <nickname> a message that only that person can read.");
       client->send_msg(
-          "Syntax: /MSG <nick | channel> [message]\nFor example, /MSG John "
-          "Salut toi !\n/MSG #thisChannel Salut tout le monde !");
+          "Syntax: /MSG <nick | channel> [message]\nFor example, '/MSG John "
+          "Salut toi !'\n'/MSG #thisChannel Salut tout le monde !'");
     } else if (cmd == "quit") {
       client->send_msg("Exits IRC (also leaves any channels you may be on).");
       client->send_msg("Syntax: /QUIT [optional farewell message]");
@@ -61,15 +61,15 @@ void Server::do_action_help(Client *client, std::vector<std::string> args) {
     } else if (cmd == "me") {
       client->send_msg("Display a pink message on a channel.");
       client->send_msg("Syntax: /ME <message>\nFor example, '/ME sing Here "
-                       "Comes The Sun - The Beatles'");
+          "Comes The Sun - The Beatles'");
     } else if (cmd == "kick") {
       client->send_msg("Forcibly remove a user from a channel. This command "
-                       "can only be used by a channel operator");
+          "can only be used by a channel operator");
       client->send_msg("Syntax: /KICK <channel> <user> [<comment>]");
     } else if (cmd == "invite") {
       client->send_msg("Invites <nickname> to the channel <channel>. <channel> "
-                       "does not have to exist, but if it does, only members "
-                       "of the channel are allowed to invite other clients.");
+          "does not have to exist, but if it does, only members "
+          "of the channel are allowed to invite other clients.");
       client->send_msg("Syntax: /INVITE <nickname> <channel>");
     } else if (cmd == "topic") {
       client->send_msg(
@@ -80,17 +80,17 @@ void Server::do_action_help(Client *client, std::vector<std::string> args) {
       client->send_msg("Syntax: /TOPIC <channel> [<topic>]");
     } else if (cmd == "mode") {
       client->send_msg("The MODE command is dual-purpose. It can be used to "
-                       "set both user and channel modes.");
+          "set both user and channel modes.");
       client->send_msg("Syntax: /MODE <channel> <flags> [<args>]\n/MODE "
-                       "<nickname> <flags> (user)");
+          "<nickname> <flags> (user)");
     } else if (cmd == "help") {
       client->send_msg(
           "The HELP command. Display to a user a command description.");
       client->send_msg("Syntax: /HELP [optional command name]");
     } else if (cmd == "pass") {
       client->send_msg("The PASS command is used to set a 'connection "
-                       "password'. The password can and must be set before any "
-                       "attempt to register the connection is made.");
+          "password'. The password can and must be set before any "
+          "attempt to register the connection is made.");
       client->send_msg("Syntax: /PASS <password>");
     } else
       client->send_msg("Sorry. We could not find your command.");

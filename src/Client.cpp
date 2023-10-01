@@ -4,11 +4,10 @@
 #include <sys/socket.h>
 #include "Client.hpp"
 #include "Colors.hpp"
-#include "Server.hpp"
 
 Client::Client() : _fd(-1), _verified(false) {}
 
-Client::Client(std::string hostname, int fd, Server *s) : _hostname(hostname),_fd(fd), _serv(s) {}
+Client::Client(std::string hostname, int fd) : _hostname(hostname),_fd(fd){}
 
 Client::Client(const Client &client) {
   _nickname = client._nickname;
@@ -53,11 +52,6 @@ const std::string &Client::getUsername() const {
 
 int Client::getFd() const {
   return _fd;
-}
-
-Server* Client::getServer() const
-{
-  return (_serv);
 }
 
 bool  Client::isVerified() const

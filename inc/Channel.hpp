@@ -29,6 +29,8 @@ public:
     const std::string &getName() const;
 
     const std::string &getTopic() const;
+    
+    const std::vector<Client *> &getClients() const;
 
     bool is_client(const Client *client) const;
 

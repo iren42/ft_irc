@@ -5,43 +5,38 @@ void Server::do_action_whois(Client *client, std::vector<std::string> args)
   if (args.size() != 2)
   {
     client->send_msg(
-        "Error: syntax should be: '/WHOIS <nick>'\nFor example, '/WHOIS john'");
+        "Erreur : la syntaxe devrait etre '/WHOIS <nick>'\nExemple : /WHOIS john");
   }
+  /*
+   * Write this message on the client side:
+   * <nick> is <username>
+   * <nick> on <channels>
+   */
   else
   {
     std::string nick = args.back();
     std::string buf;
-    CLIENTS map = client->getServer()->getClients();
-    CLIENTS::iterator it = map.begin();
-    /*
-     * Write this message on the client side:
-     * <nick> is <username>
-     * <nick> on <channels>
-     */
-    while (it != map.end())
+    CLIENTS::iterator it = _map_client.begin();
+    while (it != _map_client.end())
     {
       if (((*it).second)->getNickname() == nick)
       {
-        buf.append(nick);
-        buf.append(" is ");
-        buf.append((*it).second->getUsername());
-        buf.append("\n");
-        buf.append(nick);
-        buf.append(" on");
-        CHANNELS chan = (*it).second->getServer()->getChannels();
-        CHANNELS::iterator ita = chan.begin();
-        while (ita != chan.end())
+        buf.append(nick + " est " + (*it).second->getUsername() + "\n");
+        buf.append(nick + " sur");
+        CHANNELS::iterator ita = _map_channel.begin();
+        while (ita != _map_channel.end())
         {
           if (((*ita).second)->is_client((*it).second))
           {
-            buf.append(" #");
-            buf.append((*ita).first);
+            buf.append(" #" + (*ita).first);
           }
           ita++;
         }
+        client->send_msg(buf);
+        return ;
       }
       it++;
     }
-    client->send_msg(buf);
+    client->send_msg("ERR_NOSUCHNICK");
   }
 }
