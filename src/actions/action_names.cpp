@@ -23,7 +23,16 @@ void Server::do_action_names(Client *client, std::vector<std::string> args) {
         listeUtilisateurs += (*it2)->getNickname() + "\n";
     }
 
-    std::string message = "Utilisateurs dans le canal " + canal->getName() + " :\n";
+    std::stringstream ss;
+
+
+    std::string message = "Utilisateurs dans le canal " + canal->getName() + " :";
+    if (canal->getLimit() > 0)
+        ss << "[" << canal->get_nb_clients() << "/" << canal->getLimit() << "]\n";
+    else
+        ss << "[" << canal->get_nb_clients() << "]\n";
+
+    message += ss.str();
     message += "----------------------------------------\n";
     message += listeUtilisateurs + "\n";
     message += "----------------------------------------";

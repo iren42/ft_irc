@@ -91,9 +91,14 @@ void Server::parse_action(std::string message, Client *client) {
         arguments.push_back(motActuel);
 
     std::cout << "firstWord [" << firstWord.length() << "] = '" << firstWord << "'" << std::endl;
-    if (_map_cmd.find(firstWord) != _map_cmd.end())
+    if (_map_cmd.find(firstWord) != _map_cmd.end()) {
+        if (!client->isVerified() && firstWord != "/pass") {
+            client->send_msg(
+                    "\033[1;31mVous n'êtes pas identifié, utilisez la commande /PASS <mdp>.\033[0m");
+            return;
+        }
         ((this->*_map_cmd[firstWord]))(client, arguments);
-    else
+    } else
         std::cout << "Not a command" << std::endl;
 
 }

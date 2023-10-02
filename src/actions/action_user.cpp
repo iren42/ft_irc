@@ -19,6 +19,11 @@ void Server::do_action_user(Client *client, std::vector<std::string> args) {
         return;
     }
 
+    if (nickname[0] == '#'){
+        client->send_msg("ERREUR : Le nickname ne peut commencer par #");
+        return;
+    }
+
     std::string realname;
     for (size_t i = 3; i < args.size(); i++) {
         realname += args[i];

@@ -109,6 +109,12 @@ private:
 
     std::string createMsg(std::vector<std::string>);
 
+    void do_action_mode_channel(Client *client, std::vector<std::string> vector1);
+
+    void do_action_mode_channel_limit(Client *client, Channel *channel, std::string cmd, std::vector<std::string> args);
+
+    void do_action_mode_channel_key(Client *client, Channel *channel, std::string cmd, std::vector<std::string> args);
+
 public:
     ~Server();
 
@@ -122,8 +128,6 @@ public:
 
     std::string handle_client(int client_fd, Client *client);
 
-    std::map<int, Client *> getClients();
-
     CLIENTS getClients() const;
 
     CHANNELS getChannels() const;
@@ -131,6 +135,8 @@ public:
     const std::string &getPass() const;
 
     void disconnect(Client *pClient);
+
+
 };
 
 #endif

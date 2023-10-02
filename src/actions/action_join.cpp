@@ -3,7 +3,7 @@
 void Server::do_action_join(Client *client, std::vector<std::string> args) {
 
     if (args.size() != 2) {
-        client->send_msg("Bad argument number. Format : JOIN canal_name");
+        client->send_msg("Erreur: Format : JOIN <nom du canal> [mot de passe] ");
         return;
     }
 
@@ -15,11 +15,21 @@ void Server::do_action_join(Client *client, std::vector<std::string> args) {
         //Le channel existe.
         Channel *channel = it->second;
 
+        if (channel->getLockPass() != "") {
+            if (args.size() != 3)
+                client->send_msg("\033[1;31mLe channel " + canal_name + " a un mot de passe.\033[0m");
+            std::string mdp = args[3];
+            if (mdp != channel->getLockPass())
+                client->send_msg("\033[1;31mMauvais mot de passe.\033[0m");
+        }
+
         if (channel->is_client(client))
             client->send_msg("Vous êtes déjà dans ce canal");
         else {
-            client->send_msg("Vous venez de rejoindre le canal " + args[1]);
-            channel->add_client(client);
+            if (channel->add_client(client))
+                client->send_msg("Vous venez de rejoindre le canal " + args[1]);
+            else
+                client->send_msg("Vous n'avez pas le droit de rejoindre ce canal");
         }
     } else {
         Channel *new_Chanel = new Channel(canal_name, client);
