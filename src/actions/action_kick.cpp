@@ -12,14 +12,15 @@ void Server::do_action_kick(Client *client, std::vector<std::string> args) {
 
     std::map<std::string, Channel *>::iterator it = _map_channel.find(channelName);
 
-    if (it == _map_channel.end()) {
-        client->send_msg("\033[1;31mLe canal " + channelName + " n'a pas été trouvé.\033[0m");
+    Channel *theChannel = get_channel_by_name(channelName);
+
+
+    if (!theChannel) {
+        client->send_msg("Le canal" + channelName + "n'existe pas.");
         return;
     }
 
-    Channel *canal = it->second;
-
-    if (!canal->is_op(client)) {
+    if (!theChannel->is_op(client)) {
         client->send_msg("Vous n'avez pas les droits d'opérateur pour exécuter cette commande.");
         return;
     }
@@ -44,7 +45,7 @@ void Server::do_action_kick(Client *client, std::vector<std::string> args) {
             }
         }
     }
-    canal->remove_client(badClient);
+    theChannel->remove_client(badClient);
     badClient->send_msg(message);
 
 }

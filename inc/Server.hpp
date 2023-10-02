@@ -33,71 +33,103 @@ class Server;
 #define SUCCESS 1
 extern int running;
 
-typedef std::map<int, Client*> CLIENTS;
-typedef std::map<std::string, Channel*> CHANNELS;
+typedef std::map<int, Client *> CLIENTS;
+typedef std::map<std::string, Channel *> CHANNELS;
 
-class Server
-{
+class Server {
 private:
-	int _sockfd;
-	int _epollfd;
-	int _port;
-    int	_swtch; //0 = nv message, 1 =message en cours;
+    int _sockfd;
+    int _epollfd;
+    int _port;
+    int _swtch; //0 = nv message, 1 =message en cours;
 
     std::string _msg;
     std::string _pass;
     std::map<std::string, void (Server::*)(Client *, std::vector<std::string>)> _map_cmd;
-    std::map<int, Client*> _map_client;
-    std::map<std::string, Channel*> _map_channel;
+    std::map<int, Client *> _map_client;
+    std::map<std::string, Channel *> _map_channel;
 
-	Server(const Server &);
-	Server &operator=(const Server &);
+    Server(const Server &);
 
-	int epoll_add_fd(int, int, struct epoll_event &);
-	int new_connection(struct epoll_event &);
-	ssize_t ser_recv(struct epoll_event &);
+    Server &operator=(const Server &);
+
+    int epoll_add_fd(int, int, struct epoll_event &);
+
+    int new_connection(struct epoll_event &);
+
+    ssize_t ser_recv(struct epoll_event &);
 
     Client *get_client_by_nickname(std::string nickname);
+
     Channel *get_channel_by_name(std::string name);
 
-	void init_map_action();
-	void parse_action(std::string s, Client *pClient);
+    void init_map_action();
+
+    void parse_action(std::string s, Client *pClient);
 
     void do_action_pass(Client *, std::vector<std::string>);
+
     void do_action_nick(Client *, std::vector<std::string>);
+
     void do_action_user(Client *, std::vector<std::string>);
+
     void do_action_join(Client *, std::vector<std::string>);
+
     void do_action_part(Client *, std::vector<std::string>);
+
     void do_action_privmsg(Client *, std::vector<std::string>);
+
     void do_action_help(Client *, std::vector<std::string>);
+
     void do_action_quit(Client *, std::vector<std::string>);
+
     void do_action_list(Client *, std::vector<std::string>);
+
     void do_action_whois(Client *, std::vector<std::string>);
+
     void do_action_names(Client *, std::vector<std::string>);
+
     void do_action_kick(Client *, std::vector<std::string>);
+
     void do_action_invite(Client *, std::vector<std::string>);
+
     void do_action_topic(Client *, std::vector<std::string>);
+
     void do_action_mode(Client *, std::vector<std::string>);
 
-    void	msgChannel(Client *, std::string, std::vector<std::string>);
-    void	msgClient(Client *, std::string, std::vector<std::string>);
+    void msgChannel(Client *, std::string, std::vector<std::string>);
+
+    void msgClient(Client *, std::string, std::vector<std::string>);
+
     std::string parseChannel(std::string);
-    bool  isInMapChannel(std::string);
+
+    bool isInMapChannel(std::string);
+
     CLIENTS::iterator findClient(std::string);
+
     std::string createMsg(std::vector<std::string>);
 
-  public:
+public:
     ~Server();
+
     Server(int, std::string);
 
-	void launch();
-	void generate_socket();
-	void client_disconnect(Client *client);
-	std::string handle_client(int client_fd, Client *client);
-	std::map<int, Client*> getClients();
+    void launch();
+
+    void generate_socket();
+
+    void client_disconnect(Client *client);
+
+    std::string handle_client(int client_fd, Client *client);
+
+    std::map<int, Client *> getClients();
+
     CLIENTS getClients() const;
-    CHANNELS  getChannels() const;
-    const std::string& getPass() const;
+
+    CHANNELS getChannels() const;
+
+    const std::string &getPass() const;
+
     void disconnect(Client *pClient);
 };
 

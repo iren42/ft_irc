@@ -21,16 +21,17 @@ private:
 public:
 
     Channel(std::string name, Client *creator);
+
     Channel(const Channel &client);
+
     Channel &operator=(const Channel &client);
+
     virtual ~Channel();
 
 
     const std::string &getName() const;
 
     const std::string &getTopic() const;
-    
-    const std::vector<Client *> &getClients() const;
 
     bool is_client(const Client *client) const;
 

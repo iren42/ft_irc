@@ -18,7 +18,8 @@ void Server::do_action_names(Client *client, std::vector<std::string> args) {
     Channel *canal = it->second;
 
     std::string listeUtilisateurs;
-    for (std::vector<Client *>::const_iterator it2 = canal->getClients().begin(); it2 != canal->getClients().end(); ++it2) {
+    for (std::vector<Client *>::const_iterator it2 = canal->getClients().begin();
+         it2 != canal->getClients().end(); ++it2) {
         listeUtilisateurs += (*it2)->getNickname() + "\n";
     }
 

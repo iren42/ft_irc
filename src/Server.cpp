@@ -17,19 +17,16 @@ Server::Server(int port, std::string pass) : _port(port), _pass(pass) {
     _swtch = 0;
 }
 
-const std::string& Server::getPass() const
-{
-  return (_pass);
+const std::string &Server::getPass() const {
+    return (_pass);
 }
 
-CLIENTS Server::getClients() const
-{
-	return (_map_client);
+CLIENTS Server::getClients() const {
+    return (_map_client);
 }
 
-CHANNELS  Server::getChannels() const
-{
-  return (_map_channel);
+CHANNELS Server::getChannels() const {
+    return (_map_channel);
 }
 
 int Server::epoll_add_fd(int fd, int event_type, struct epoll_event &event) {
@@ -64,10 +61,12 @@ int Server::new_connection(struct epoll_event &event) {
     fcntl(infd, F_SETFL, flags);
 
     char hostname[128];
-	int returngetname;
-    if ((returngetname = getnameinfo((struct sockaddr *) &in_addr, sizeof(in_addr), hostname, 100, NULL, 0, NI_NUMERICSERV)) != 0){
-		std::cout << returngetname << std::endl;
-        throw std::runtime_error("Error while getting hostname on new client.");}
+    int returngetname;
+    if ((returngetname = getnameinfo((struct sockaddr *) &in_addr, sizeof(in_addr), hostname, 100, NULL, 0,
+                                     NI_NUMERICSERV)) != 0) {
+        std::cout << returngetname << std::endl;
+        throw std::runtime_error("Error while getting hostname on new client.");
+    }
 
     Client *client = new Client(hostname, infd, this);
 
@@ -84,20 +83,21 @@ int Server::new_connection(struct epoll_event &event) {
 }
 
 ssize_t Server::ser_recv(struct epoll_event &event) {
-        Client *client = _map_client[event.data.fd];
-		std::string message = handle_client(event.data.fd, client);
-		if (!message[0]){
-			return (0);}
-        parse_action(message, client);
+    Client *client = _map_client[event.data.fd];
+    std::string message = handle_client(event.data.fd, client);
+    if (!message[0]) {
+        return (0);
+    }
+    parse_action(message, client);
 
-        std::cout << "Client_FD[" << event.data.fd << "] wrote'" << message << "'" << std::endl;
+    std::cout << "Client_FD[" << event.data.fd << "] wrote'" << message << "'" << std::endl;
 
-        if (!strncmp(message.c_str(), "/QUIT\n", 6) ||
-            !strncmp(message.c_str(), "/quit\n", 6)) {
-            std::cout << "Client_FD[" << event.data.fd << "] left the server"
-                      << std::endl;
-            close(event.data.fd);
-        }
+    if (!strncmp(message.c_str(), "/QUIT\n", 6) ||
+        !strncmp(message.c_str(), "/quit\n", 6)) {
+        std::cout << "Client_FD[" << event.data.fd << "] left the server"
+                  << std::endl;
+        close(event.data.fd);
+    }
 
     return 0;
 }
@@ -172,7 +172,7 @@ void Server::launch() {
         close(_epollfd);
         return;
     }
-	_swtch = 0;
+    _swtch = 0;
     while (running) {
         std::cout << "Polling for input..." << std::endl;
         event_count = epoll_wait(_epollfd, events, MAX_EVENTS, -1);

@@ -15,13 +15,13 @@ class Server;
 
 class Client {
 private:
-  std::string _nickname;
-  std::string _realname;
-  std::string _hostname;
-  std::string _username;
-  int _fd;
-//  Server *_serv;
-  bool  _verified;
+    std::string _nickname;
+    std::string _realname;
+    std::string _hostname;
+    std::string _username;
+    int _fd;
+    Server *_serv;
+    bool _verified;
 
 
     std::string generateRandomColor(const std::string &seed);
@@ -31,25 +31,39 @@ private:
     Client();
 
 public:
-  Client(std::string hostname, int fd, Server *);
-  Client(const Client &client);
-  Client &operator=(const Client &client);
-  virtual ~Client();
+    Client(std::string hostname, int fd, Server *);
 
-  const std::string &getNickname() const;
-  const std::string &getRealname() const;
-  const std::string &getHostname() const;
-  const std::string &getUsername() const;
-  int getFd() const;
- // Server* getServer() const;
-  bool  isVerified() const;
+    Client(const Client &client);
 
-  void setNickname(const std::string &nickname);
-  void setRealname(const std::string &realname);
-  void setHostname(const std::string &hostname);
-  void setUsername(const std::string &hostname);
-  void setVerified(bool);
-  void setFd(int fd);
+    Client &operator=(const Client &client);
+
+    virtual ~Client();
+
+    const std::string &getNickname() const;
+
+    const std::string &getRealname() const;
+
+    const std::string &getHostname() const;
+
+    const std::string &getUsername() const;
+
+    int getFd() const;
+
+    Server *getServer() const;
+
+    bool isVerified() const;
+
+    void setNickname(const std::string &nickname);
+
+    void setRealname(const std::string &realname);
+
+    void setHostname(const std::string &hostname);
+
+    void setUsername(const std::string &hostname);
+
+    void setVerified(bool);
+
+    void setFd(int fd);
 
     void send_msg(std::string msg);
 

@@ -4,20 +4,6 @@
 #include "Channel.hpp"
 #include "Colors.hpp"
 
-
-const std::string &Channel::getName() const {
-    return _name;
-}
-
-const std::string &Channel::getTopic() const {
-    return _topic;
-}
-
-const std::vector<Client *> &Channel::getClients() const
-{
-  return (_clients);
-}
-
 bool Channel::is_client(const Client *client) const {
     for (std::vector<Client *>::const_iterator it = _clients.begin(); it != _clients.end(); ++it) {
         if (*it == client) return true;
@@ -115,4 +101,12 @@ const std::vector<Client *> &Channel::getClients() const {
 
 const std::vector<Client *> &Channel::getOps() const {
     return _ops;
+}
+
+const std::string &Channel::getName() const {
+    return _name;
+}
+
+const std::string &Channel::getTopic() const {
+    return _topic;
 }

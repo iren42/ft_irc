@@ -13,24 +13,24 @@ Client::Client(std::string hostname, int fd, Server *s) : _hostname(hostname), _
 }
 
 Client::Client(const Client &client) {
-  _nickname = client._nickname;
-  _realname = client._realname;
-  _hostname = client._hostname;
-  _username = client._username;
-  _fd = client._fd;
-  _verified = client._verified;
-}
-
-Client &Client::operator=(const Client &client) {
-  if (this != &client) {
     _nickname = client._nickname;
     _realname = client._realname;
     _hostname = client._hostname;
     _username = client._username;
     _fd = client._fd;
     _verified = client._verified;
-  }
-  return *this;
+}
+
+Client &Client::operator=(const Client &client) {
+    if (this != &client) {
+        _nickname = client._nickname;
+        _realname = client._realname;
+        _hostname = client._hostname;
+        _username = client._username;
+        _fd = client._fd;
+        _verified = client._verified;
+    }
+    return *this;
 }
 
 Client::~Client() {
@@ -50,7 +50,7 @@ const std::string &Client::getHostname() const {
 }
 
 const std::string &Client::getUsername() const {
-  return _username;
+    return _username;
 }
 
 
@@ -58,9 +58,10 @@ int Client::getFd() const {
     return _fd;
 }
 
-bool  Client::isVerified() const {
+bool Client::isVerified() const {
     return (_verified);
 }
+
 Server *Client::getServer() const {
     return (_serv);
 }
@@ -85,16 +86,15 @@ void Client::setFd(int fd) {
     _fd = fd;
 }
 
-void Client::setVerified(bool value)
-{
-  _verified = value;
+void Client::setVerified(bool value) {
+    _verified = value;
 }
 
 void Client::send_msg(std::string msg) {
     send_msg(msg, "Serveur");
 }
 
-unsigned int Client::strhash(const char* str) {
+unsigned int Client::strhash(const char *str) {
     unsigned int hash = 5381;
     int c;
 
@@ -106,7 +106,7 @@ unsigned int Client::strhash(const char* str) {
 }
 
 
-std::string Client::generateRandomColor(const std::string& seed) {
+std::string Client::generateRandomColor(const std::string &seed) {
     std::srand(strhash(seed.c_str()));
 
     int color = std::rand() % 7 + 31;
@@ -149,10 +149,10 @@ void Client::disconnect() {
 }
 
 std::ostream &operator<<(std::ostream &outFile, Client const &client) {
-    outFile << BOLDWHITE << "Nickname: " << RESET<< client.getNickname() << std::endl;
-    outFile << BOLDWHITE << "Realname: " << RESET<< client.getRealname() << std::endl;
-    outFile << BOLDWHITE << "Hostname: " << RESET<< client.getHostname() << std::endl;
-    outFile << BOLDWHITE << "File Descriptor: " << RESET<< client.getFd() << std::endl;
+    outFile << BOLDWHITE << "Nickname: " << RESET << client.getNickname() << std::endl;
+    outFile << BOLDWHITE << "Realname: " << RESET << client.getRealname() << std::endl;
+    outFile << BOLDWHITE << "Hostname: " << RESET << client.getHostname() << std::endl;
+    outFile << BOLDWHITE << "File Descriptor: " << RESET << client.getFd() << std::endl;
 
     outFile << RESET;
 

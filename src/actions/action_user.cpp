@@ -9,14 +9,12 @@ void Server::do_action_user(Client *client, std::vector<std::string> args) {
     std::string nickname = args[1];
     std::string hostname = args[2];
 
-    if (nickname == "undefined")
-    {
+    if (nickname == "undefined") {
         client->send_msg("ERREUR : Le nickname undefined est interdit.");
         return;
     }
 
-    if (get_client_by_nickname(nickname))
-    {
+    if (get_client_by_nickname(nickname)) {
         client->send_msg("ERREUR : Le nickname " + nickname + " est déjà utilisé");
         return;
     }
