@@ -39,7 +39,7 @@ int Server::epoll_add_fd(int fd, int event_type, struct epoll_event &event) {
 }
 
 int Server::new_connection(struct epoll_event &event) {
-    struct sockaddr in_addr;
+    struct sockaddr in_addr = {AF_INET, 0, 0, 0};
     socklen_t in_len;
     int infd;
     int flags;
@@ -48,8 +48,15 @@ int Server::new_connection(struct epoll_event &event) {
     infd = accept(_sockfd, &in_addr, &in_len);
     if (infd == -1) {
         // if is EAGAIN or EWOULDBLOCK, no incoming connections are present to be accepted.
-        if (!((errno == EAGAIN) || (errno == EWOULDBLOCK)))
-            return (-1);
+        if (errno == EAGAIN) {
+            // Erreur EAGAIN
+            fprintf(stderr, "Erreur : Ressource temporairement non disponible (EAGAIN).\n");
+            return -1;
+        } else if (errno == EWOULDBLOCK) {
+            // Erreur EWOULDBLOCK
+            fprintf(stderr, "Erreur : Opération bloquerait (EWOULDBLOCK).\n");
+            return -1;
+        }
     }
     // mark new socket fd as non -blocking
     flags = fcntl(infd, F_GETFL, 0);
@@ -62,13 +69,18 @@ int Server::new_connection(struct epoll_event &event) {
 		std::cout << returngetname << std::endl;
         throw std::runtime_error("Error while getting hostname on new client.");}
 
-  Client *client = new Client(hostname, infd);
-  client->send_msg("Bienvenue sur ircserver !\nVeuillez entrer le mot de passe du serveur"
-      " avec la commande :\n/PASS <mot de passe>");
-  std::cout << "New client : " << hostname << " ; " << infd << std::endl;
-  _map_client[infd] = client;
+    Client *client = new Client(hostname, infd, this);
 
-    return (epoll_add_fd(infd, EPOLLIN, event));
+    std::cout << "New client : " << hostname << " ; " << infd << std::endl;
+    _map_client[infd] = client;
+
+    int result = epoll_add_fd(infd, EPOLLIN, event);
+
+    if (result)
+        fprintf(stderr, "Erreur lors de l'appel à epoll_add_fd  : %s\n", strerror(errno));
+
+
+    return result;
 }
 
 ssize_t Server::ser_recv(struct epoll_event &event) {
@@ -87,8 +99,48 @@ ssize_t Server::ser_recv(struct epoll_event &event) {
             close(event.data.fd);
         }
 
-	return 0;
+    return 0;
 }
+
+
+Client *Server::get_client_by_nickname(std::string nickname) {
+    std::map<int, Client *>::iterator it = _map_client.begin();
+    while (it != _map_client.end()) {
+        if (it->second->getNickname() == nickname) return it->second;
+        else ++it;
+    }
+    return 0;
+}
+
+Channel *Server::get_channel_by_name(std::string name) {
+    std::map<std::string, Channel *>::iterator it = _map_channel.find(name);
+
+    if (it == _map_channel.end()) {
+        return 0;
+    }
+
+    return it->second;
+}
+
+void Server::disconnect(Client *pClient) {
+
+    std::map<int, Client *>::iterator it = _map_client.begin();
+    while (it != _map_client.end()) {
+        if (it->second == pClient) _map_client.erase(it++);
+        else ++it;
+    }
+
+    std::map<std::string, Channel *>::iterator it2 = _map_channel.begin();
+    while (it2 != _map_channel.end()) {
+        it2->second->remove_client(pClient);
+        if (it2->second->isEmpty()) {
+            delete it2->second;
+            _map_channel.erase(it2++);
+        } else ++it2;
+    }
+    close(pClient->getFd());
+}
+
 
 void handleSig(int sigint) {
     std::cout << std::endl << "Exsiting server..." << std::endl;

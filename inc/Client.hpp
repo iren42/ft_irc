@@ -6,6 +6,12 @@
 
 #include <iostream>
 #include <string>
+#include <functional>
+#include <ctime>
+#include <iostream>
+#include <sstream>
+
+class Server;
 
 class Client {
 private:
@@ -16,12 +22,16 @@ private:
   int _fd;
 //  Server *_serv;
   bool  _verified;
-   
 
-  Client();
+
+    std::string generateRandomColor(const std::string &seed);
+
+    unsigned int strhash(const char *str);
+
+    Client();
 
 public:
-  Client(std::string hostname, int fd);
+  Client(std::string hostname, int fd, Server *);
   Client(const Client &client);
   Client &operator=(const Client &client);
   virtual ~Client();
@@ -41,7 +51,11 @@ public:
   void setVerified(bool);
   void setFd(int fd);
 
-  void send_msg(std::string msg);
+    void send_msg(std::string msg);
+
+    void send_msg(std::string msg, std::string sender);
+
+    void disconnect();
 };
 
 std::ostream &operator<<(std::ostream &outFile, Client const &client);

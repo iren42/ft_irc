@@ -40,6 +40,10 @@ public:
 
     size_t get_nb_ops() const;
 
+    const std::vector<Client *> &getOps() const;
+
+    const std::vector<Client *> &getClients() const;
+
     void setName(const std::string &name);
 
     void setTopic(const std::string &topic);
@@ -52,7 +56,7 @@ public:
 
     void remove_op(Client *client);
 
-
+    bool isEmpty();
 };
 
 

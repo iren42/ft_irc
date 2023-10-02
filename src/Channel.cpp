@@ -68,6 +68,7 @@ void Channel::remove_client(Client *client) {
             break;
         }
     }
+    remove_op(client);
 }
 
 void Channel::remove_op(Client *client) {
@@ -102,4 +103,16 @@ Channel &Channel::operator=(const Channel &other) {
 
 Channel::~Channel() {
 
+}
+
+bool Channel::isEmpty() {
+    return _clients.empty();
+}
+
+const std::vector<Client *> &Channel::getClients() const {
+    return _clients;
+}
+
+const std::vector<Client *> &Channel::getOps() const {
+    return _ops;
 }

@@ -57,13 +57,15 @@ private:
 	int new_connection(struct epoll_event &);
 	ssize_t ser_recv(struct epoll_event &);
 
+    Client *get_client_by_nickname(std::string nickname);
+    Channel *get_channel_by_name(std::string name);
 
 	void init_map_action();
 	void parse_action(std::string s, Client *pClient);
 
     void do_action_pass(Client *, std::vector<std::string>);
     void do_action_nick(Client *, std::vector<std::string>);
-    void do_action_username(Client *, std::vector<std::string>);
+    void do_action_user(Client *, std::vector<std::string>);
     void do_action_join(Client *, std::vector<std::string>);
     void do_action_part(Client *, std::vector<std::string>);
     void do_action_privmsg(Client *, std::vector<std::string>);
@@ -71,7 +73,7 @@ private:
     void do_action_quit(Client *, std::vector<std::string>);
     void do_action_list(Client *, std::vector<std::string>);
     void do_action_whois(Client *, std::vector<std::string>);
-    void do_action_me(Client *, std::vector<std::string>);
+    void do_action_names(Client *, std::vector<std::string>);
     void do_action_kick(Client *, std::vector<std::string>);
     void do_action_invite(Client *, std::vector<std::string>);
     void do_action_topic(Client *, std::vector<std::string>);
@@ -96,6 +98,7 @@ private:
     CLIENTS getClients() const;
     CHANNELS  getChannels() const;
     const std::string& getPass() const;
+    void disconnect(Client *pClient);
 };
 
 #endif
