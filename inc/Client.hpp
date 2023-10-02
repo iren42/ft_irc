@@ -6,7 +6,7 @@
 
 #include <iostream>
 #include <string>
-class	Server;
+
 class Client {
 private:
   std::string _nickname;
@@ -14,12 +14,14 @@ private:
   std::string _hostname;
   std::string _username;
   int _fd;
-  Server *_serv;
+//  Server *_serv;
+  bool  _verified;
+   
 
   Client();
 
 public:
-  Client(std::string hostname, int fd, Server *);
+  Client(std::string hostname, int fd);
   Client(const Client &client);
   Client &operator=(const Client &client);
   virtual ~Client();
@@ -29,12 +31,14 @@ public:
   const std::string &getHostname() const;
   const std::string &getUsername() const;
   int getFd() const;
-  Server* getServer() const;
+ // Server* getServer() const;
+  bool  isVerified() const;
 
   void setNickname(const std::string &nickname);
   void setRealname(const std::string &realname);
   void setHostname(const std::string &hostname);
   void setUsername(const std::string &hostname);
+  void setVerified(bool);
   void setFd(int fd);
 
   void send_msg(std::string msg);

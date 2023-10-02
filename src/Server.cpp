@@ -14,13 +14,24 @@ Server::Server(int port, std::string pw) : _port(port), _pw(pw) {
     std::cout << "Server constructor called" << std::endl;
     init_map_action();
     running = 1;
-	_swtch = 0;
+    _swtch = 0;
 }
 
-	std::map<int, Client*> Server::getClients()
+const std::string& Server::getPass() const
+{
+  return (_pass);
+}
+
+CLIENTS Server::getClients() const
 {
 	return (_map_client);
 }
+
+CHANNELS  Server::getChannels() const
+{
+  return (_map_channel);
+}
+
 int Server::epoll_add_fd(int fd, int event_type, struct epoll_event &event) {
     event.data.fd = fd;
     event.events = event_type;
@@ -28,7 +39,7 @@ int Server::epoll_add_fd(int fd, int event_type, struct epoll_event &event) {
 }
 
 int Server::new_connection(struct epoll_event &event) {
-    struct sockaddr in_addr = {AF_INET, 0, 0, 0};
+    struct sockaddr in_addr;
     socklen_t in_len;
     int infd;
     int flags;
@@ -51,10 +62,11 @@ int Server::new_connection(struct epoll_event &event) {
 		std::cout << returngetname << std::endl;
         throw std::runtime_error("Error while getting hostname on new client.");}
 
-    Client *client = new Client(hostname, infd);
-
-    std::cout << "New client : " << hostname << " ; " << infd << std::endl;
-    _map_client[infd] = client;
+  Client *client = new Client(hostname, infd);
+  client->send_msg("Bienvenue sur ircserver !\nVeuillez entrer le mot de passe du serveur"
+      " avec la commande :\n/PASS <mot de passe>");
+  std::cout << "New client : " << hostname << " ; " << infd << std::endl;
+  _map_client[infd] = client;
 
     return (epoll_add_fd(infd, EPOLLIN, event));
 }
@@ -155,12 +167,12 @@ void Server::generate_socket() {
 
     //creation de la socket
     _sockfd = socket(AF_INET, SOCK_STREAM,
-                     0);
+                     0); // AF_INET -> on utilise IPv4, SOCK_STREAM -> socket de type flux (TCP), 0 pour mettre le protocole par defaut (IPv4)
     if (_sockfd == -1) {
         throw std::runtime_error("Error while generating a socket");
     }
     if (fcntl(_sockfd, F_SETFL, O_NONBLOCK) <
-        0) {
+        0) { //fcntl fonction modifiant les attribut socket, F_SETFL pour set un mode, O_NONBLOCK pour definir le mode a set (non bloquant)
         throw std::runtime_error(
                 "Error while setting spcket to non-blocking mode");
     }

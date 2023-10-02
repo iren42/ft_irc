@@ -12,7 +12,7 @@ SRC			= main.cpp \
 				actions/action_username.cpp\
 				actions/action_join.cpp\
 				actions/action_part.cpp\
-				actions/action_msg.cpp\
+				actions/action_privmsg.cpp\
 				actions/action_help.cpp\
 				actions/action_quit.cpp\
 				actions/action_list.cpp\
@@ -22,6 +22,7 @@ SRC			= main.cpp \
 				actions/action_kick.cpp\
 				actions/action_mode.cpp\
 				actions/action_topic.cpp\
+				actions/action_pass.cpp\
 
 
 
@@ -45,7 +46,7 @@ $(NAME): $(OBJS)
 	@tput setaf 6
 	@echo "${@}"
 
-	$(CC) -o $@ $(OBJS)
+	@$(CC) -o $@ $(OBJS)
 
 $(OBJDIR)%.o: $(SRCDIR)%.cpp
 	@make create_dir_objs --no-print-directory

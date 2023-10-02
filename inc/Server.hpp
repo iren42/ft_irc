@@ -34,6 +34,8 @@ class Server;
 extern int running;
 
 typedef std::map<int, Client*> CLIENTS;
+typedef std::map<std::string, Channel*> CHANNELS;
+
 class Server
 {
 private:
@@ -41,10 +43,8 @@ private:
 	int _epollfd;
 	int _port;
 
-	std::string _msg;
-	std::string _pw;
-	int	_swtch; //0 = nv message, 1 =message en cours;
-	std::map<std::string, void (Server::*)(Client *, std::vector<std::string>)> _map_cmd;
+    std::string _pass;
+    std::map<std::string, void (Server::*)(Client *, std::vector<std::string>)> _map_cmd;
     std::map<int, Client*> _map_client;
     std::map<std::string, Channel*> _map_channel;
 
@@ -59,24 +59,32 @@ private:
 	void init_map_action();
 	void parse_action(std::string s, Client *pClient);
 
-	void do_action_nick(Client *, std::vector<std::string>);
-	void do_action_username(Client *, std::vector<std::string>);
-	void do_action_join(Client *, std::vector<std::string>);
-	void do_action_part(Client *, std::vector<std::string>);
-	void do_action_msg(Client *, std::vector<std::string>);
-	void do_action_help(Client *, std::vector<std::string>);
-	void do_action_quit(Client *, std::vector<std::string>);
-	void do_action_list(Client *, std::vector<std::string>);
-	void do_action_whois(Client *, std::vector<std::string>);
-	void do_action_me(Client *, std::vector<std::string>);
-	void do_action_kick(Client *, std::vector<std::string>);
-	void do_action_invite(Client *, std::vector<std::string>);
-	void do_action_topic(Client *, std::vector<std::string>);
-	void do_action_mode(Client *, std::vector<std::string>);
+    void do_action_pass(Client *, std::vector<std::string>);
+    void do_action_nick(Client *, std::vector<std::string>);
+    void do_action_username(Client *, std::vector<std::string>);
+    void do_action_join(Client *, std::vector<std::string>);
+    void do_action_part(Client *, std::vector<std::string>);
+    void do_action_privmsg(Client *, std::vector<std::string>);
+    void do_action_help(Client *, std::vector<std::string>);
+    void do_action_quit(Client *, std::vector<std::string>);
+    void do_action_list(Client *, std::vector<std::string>);
+    void do_action_whois(Client *, std::vector<std::string>);
+    void do_action_me(Client *, std::vector<std::string>);
+    void do_action_kick(Client *, std::vector<std::string>);
+    void do_action_invite(Client *, std::vector<std::string>);
+    void do_action_topic(Client *, std::vector<std::string>);
+    void do_action_mode(Client *, std::vector<std::string>);
 
-public:
-	~Server();
-	Server(int, std::string);
+    void	msgChannel(Client *, std::string, std::vector<std::string>);
+    void	msgClient(Client *, std::string, std::vector<std::string>);
+    std::string parseChannel(std::string);
+    bool  isInMapChannel(std::string);
+    CLIENTS::iterator findClient(std::string);
+    std::string createMsg(std::vector<std::string>);
+
+  public:
+    ~Server();
+    Server(int, std::string);
 
 	void launch();
 	void generate_socket();
