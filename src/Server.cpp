@@ -14,13 +14,17 @@ Server::Server(int port, std::string pw) : _port(port), _pw(pw) {
     std::cout << "Server constructor called" << std::endl;
     init_map_action();
     running = 1;
-	_swtch = 0;
+    _swtch = 0;
 }
 
-	std::map<int, Client*> Server::getClients()
-{
-	return (_map_client);
+std::map<int, Client *> Server::getClients() {
+    return (_map_client);
 }
+
+std::map<std::string, Channel *> Server::getChannels() {
+    return (_map_channel);
+}
+
 int Server::epoll_add_fd(int fd, int event_type, struct epoll_event &event) {
     event.data.fd = fd;
     event.events = event_type;
@@ -37,8 +41,15 @@ int Server::new_connection(struct epoll_event &event) {
     infd = accept(_sockfd, &in_addr, &in_len);
     if (infd == -1) {
         // if is EAGAIN or EWOULDBLOCK, no incoming connections are present to be accepted.
-        if (!((errno == EAGAIN) || (errno == EWOULDBLOCK)))
-            return (-1);
+        if (errno == EAGAIN) {
+            // Erreur EAGAIN
+            fprintf(stderr, "Erreur : Ressource temporairement non disponible (EAGAIN).\n");
+            return -1;
+        } else if (errno == EWOULDBLOCK) {
+            // Erreur EWOULDBLOCK
+            fprintf(stderr, "Erreur : Opération bloquerait (EWOULDBLOCK).\n");
+            return -1;
+        }
     }
     // mark new socket fd as non -blocking
     flags = fcntl(infd, F_GETFL, 0);
@@ -46,37 +57,85 @@ int Server::new_connection(struct epoll_event &event) {
     fcntl(infd, F_SETFL, flags);
 
     char hostname[128];
-	int returngetname;
-    if ((returngetname = getnameinfo((struct sockaddr *) &in_addr, sizeof(in_addr), hostname, 100, NULL, 0, NI_NUMERICSERV)) != 0){
-		std::cout << returngetname << std::endl;
-        throw std::runtime_error("Error while getting hostname on new client.");}
+    int returngetname;
+    if ((returngetname = getnameinfo((struct sockaddr *) &in_addr, sizeof(in_addr), hostname, 100, NULL, 0,
+                                     NI_NUMERICSERV)) != 0) {
+        std::cout << returngetname << std::endl;
+        throw std::runtime_error("Error while getting hostname on new client.");
+    }
 
-    Client *client = new Client(hostname, infd);
+    Client *client = new Client(hostname, infd, this);
 
     std::cout << "New client : " << hostname << " ; " << infd << std::endl;
     _map_client[infd] = client;
 
-    return (epoll_add_fd(infd, EPOLLIN, event));
+    int result = epoll_add_fd(infd, EPOLLIN, event);
+
+    if (result)
+        fprintf(stderr, "Erreur lors de l'appel à epoll_add_fd  : %s\n", strerror(errno));
+
+
+    return result;
 }
 
 ssize_t Server::ser_recv(struct epoll_event &event) {
-        Client *client = _map_client[event.data.fd];
-		std::string message = handle_client(event.data.fd, client);
-		if (!message[0]){
-			return (0);}
-        parse_action(message, client);
+    Client *client = _map_client[event.data.fd];
+    std::string message = handle_client(event.data.fd, client);
+    if (!message[0])
+        return (0);
+    parse_action(message, client);
 
-        std::cout << "Client_FD[" << event.data.fd << "] wrote'" << message << "'" << std::endl;
+    std::cout << "Client_FD[" << event.data.fd << "] wrote'" << message << "'" << std::endl;
 
-        if (!strncmp(message.c_str(), "/QUIT\n", 6) ||
-            !strncmp(message.c_str(), "/quit\n", 6)) {
-            std::cout << "Client_FD[" << event.data.fd << "] left the server"
-                      << std::endl;
-            close(event.data.fd);
-        }
+    if (!strncmp(message.c_str(), "/QUIT\n", 6) ||
+        !strncmp(message.c_str(), "/quit\n", 6)) {
+        std::cout << "Client_FD[" << event.data.fd << "] left the server"
+                  << std::endl;
+        close(event.data.fd);
+    }
 
-	return 0;
+    return 0;
 }
+
+
+Client *Server::get_client_by_nickname(std::string nickname) {
+    std::map<int, Client *>::iterator it = _map_client.begin();
+    while (it != _map_client.end()) {
+        if (it->second->getNickname() == nickname) return it->second;
+        else ++it;
+    }
+    return 0;
+}
+
+Channel *Server::get_channel_by_name(std::string name) {
+    std::map<std::string, Channel *>::iterator it = _map_channel.find(name);
+
+    if (it == _map_channel.end()) {
+        return 0;
+    }
+
+    return it->second;
+}
+
+void Server::disconnect(Client *pClient) {
+
+    std::map<int, Client *>::iterator it = _map_client.begin();
+    while (it != _map_client.end()) {
+        if (it->second == pClient) _map_client.erase(it++);
+        else ++it;
+    }
+
+    std::map<std::string, Channel *>::iterator it2 = _map_channel.begin();
+    while (it2 != _map_channel.end()) {
+        it2->second->remove_client(pClient);
+        if (it2->second->isEmpty()) {
+            delete it2->second;
+            _map_channel.erase(it2++);
+        } else ++it2;
+    }
+    close(pClient->getFd());
+}
+
 
 void handleSig(int sigint) {
     std::cout << std::endl << "Exsiting server..." << std::endl;
@@ -108,7 +167,7 @@ void Server::launch() {
         close(_epollfd);
         return;
     }
-	_swtch = 0;
+    _swtch = 0;
     while (running) {
         std::cout << "Polling for input..." << std::endl;
         event_count = epoll_wait(_epollfd, events, MAX_EVENTS, -1);
@@ -118,19 +177,30 @@ void Server::launch() {
         }
         i = 0;
         while (i < event_count) {
+
+            std::cout << "event : " << i << std::endl;
+
+
             if (events[i].data.fd == _sockfd) {
+                std::cout << "{1}" << std::endl;
+
                 if (new_connection(event) == -1) {
                     running = 0;
                     break;
                 }
+                std::cout << "{2}" << std::endl;
 
                 std::cout << "Client_FD[" << event.data.fd << "] connected"
                           << std::endl;
             } else // is a READ msg
             {
+                std::cout << "{3}" << std::endl;
+
                 if (ser_recv(events[i]) == -1) {
                     running = 0;
+                    std::cout << "{4}" << std::endl;
                     break;
+
                 }
             }
             i++;

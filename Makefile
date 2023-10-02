@@ -9,7 +9,7 @@ SRC			= main.cpp \
 				Channel.cpp\
 				actions/parse_action.cpp\
 				actions/action_nick.cpp\
-				actions/action_username.cpp\
+				actions/action_user.cpp\
 				actions/action_join.cpp\
 				actions/action_part.cpp\
 				actions/action_msg.cpp\
@@ -17,7 +17,7 @@ SRC			= main.cpp \
 				actions/action_quit.cpp\
 				actions/action_list.cpp\
 				actions/action_whois.cpp\
-				actions/action_me.cpp\
+				actions/action_names.cpp\
 				actions/action_invite.cpp\
 				actions/action_kick.cpp\
 				actions/action_mode.cpp\
