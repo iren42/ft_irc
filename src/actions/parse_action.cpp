@@ -20,6 +20,19 @@ void Server::init_map_action() {
 
 void Server::client_disconnect(Client *client) {
     int fd = client->getFd();
+	std::map<std::string, Channel *>::iterator it;
+	std::vector<std::string>::iterator it_to_remove;
+	std::vector<std::string> chan_to_remove;
+
+	for (it = _map_channel.begin() ; it != _map_channel.end(); it++) {
+		std::cout << "client disconnection of channel " << it->second->getName() << std::endl;
+		it->second->remove_client(_map_client[fd]);
+		if (it->second->get_nb_clients() == 0) {
+			chan_to_remove.push_back(it->second->getName()); }}
+
+	for (it_to_remove = chan_to_remove.begin(); it_to_remove != chan_to_remove.end(); ++it_to_remove) {
+		_map_channel.erase(*it_to_remove);}
+
     epoll_ctl(_epollfd, EPOLL_CTL_DEL, fd, 0); //retrait du client de l'evenement epoll_ctl
     delete client;
     _map_client.erase(fd);
