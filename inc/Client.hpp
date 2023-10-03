@@ -24,6 +24,7 @@ private:
     bool _verified;
 
 
+
     std::string generateRandomColor(const std::string &seed);
 
     unsigned int strhash(const char *str);

@@ -5,17 +5,23 @@
 #include "Colors.hpp"
 
 bool Channel::is_client(const Client *client) const {
-    for (std::vector<Client *>::const_iterator it = _clients.begin(); it != _clients.end(); ++it) {
+    for (std::vector<Client *>::const_iterator it = _clients.begin(); it != _clients.end(); ++it)
         if (*it == client) return true;
-    }
+
     return false;
 }
 
 bool Channel::is_op(const Client *client) const {
-    for (std::vector<Client *>::const_iterator it = _ops.begin(); it != _ops.end(); ++it) {
+    for (std::vector<Client *>::const_iterator it = _ops.begin(); it != _ops.end(); ++it)
         if (*it == client) return true;
 
-    }
+    return false;
+}
+
+bool Channel::is_invite(const Client *client) const {
+    for (std::vector<Client *>::const_iterator it = _ops.begin(); it != _ops.end(); ++it)
+        if (*it == client) return true;
+
     return false;
 }
 
@@ -35,11 +41,33 @@ void Channel::setTopic(const std::string &topic) {
     _topic = topic;
 }
 
-void Channel::add_client(Client *client) {
-    if (!is_client(client))
+bool Channel::add_client(Client *client) {
+    if (get_nb_clients() >= _limit && _limit > 0)
+        return false;
+
+    if (_mode_invite && !is_invite(client))
+        return false;
+
+    if (_mode_invite)
+        remove_invite(client);
+
+    if (!is_client(client)) {
         _clients.push_back(client);
+        return true;
+    }
+    return false;
 
 }
+
+
+void Channel::add_invite(Client *client) {
+
+    if (is_invite(client))
+        return;
+
+    _invite.push_back(client);
+}
+
 
 void Channel::add_op(Client *client) {
     if (!is_op(client))
@@ -64,9 +92,25 @@ void Channel::remove_op(Client *client) {
             break;
         }
     }
+    if (_ops.empty())
+        _ops.push_back(_clients[0]);
 }
 
+void Channel::remove_invite(Client *client) {
+    for (std::vector<Client *>::iterator it = _invite.begin(); it != _invite.end(); ++it) {
+        if (*it == client) {
+            _invite.erase(it);
+            break;
+        }
+    }
+}
+
+
 Channel::Channel(std::string name, Client *creator) : _name(name) {
+    _mode_invite = false;
+    _mode_topicOp = true;
+    _lockPass = "";
+    _limit = -1;
     _topic = "";
     _clients.push_back(creator);
     _ops.push_back(creator);
@@ -109,4 +153,36 @@ const std::string &Channel::getName() const {
 
 const std::string &Channel::getTopic() const {
     return _topic;
+}
+
+bool Channel::isModeInvite() const {
+    return _mode_invite;
+}
+
+void Channel::setModeInvite(bool modeInvite) {
+    _mode_invite = modeInvite;
+}
+
+bool Channel::isModeTopicOp() const {
+    return _mode_topicOp;
+}
+
+void Channel::setModeTopicOp(bool modeTopicOp) {
+    _mode_topicOp = modeTopicOp;
+}
+
+const std::string &Channel::getLockPass() const {
+    return _lockPass;
+}
+
+void Channel::setLockPass(const std::string &lockPass) {
+    _lockPass = lockPass;
+}
+
+int Channel::getLimit() const {
+    return _limit;
+}
+
+void Channel::setLimit(int limit) {
+    _limit = limit;
 }

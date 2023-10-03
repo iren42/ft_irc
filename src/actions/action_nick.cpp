@@ -7,9 +7,26 @@ void Server::do_action_nick(Client *client, std::vector<std::string> args) {
         client->send_msg("Bad argument number. Format : NICK new_nickname");
         return;
     }
+    std::string nickname = args[1];
 
-    client->setNickname(args[1]);
-    std::string msg = "Nickname changed to ";
+
+    if (nickname == "undefined") {
+        client->send_msg("ERREUR : Le nickname undefined est interdit.");
+        return;
+    }
+
+    if (get_client_by_nickname(nickname)) {
+        client->send_msg("ERREUR : Le nickname " + nickname + " est déjà utilisé");
+        return;
+    }
+
+    if (nickname[0] == '#'){
+        client->send_msg("ERREUR : Le nickname ne peut commencer par #");
+        return;
+    }
+
+    client->setNickname(nickname);
+    std::string msg = "Nickname changer en ";
     msg.append(args[1]);
     client->send_msg(msg);
 

@@ -16,6 +16,12 @@ void Server::do_action_topic(Client *client, std::vector<std::string> args) {
         return;
     }
 
+    if (channel->isModeTopicOp() && !channel->is_op(client))
+    {
+        client->send_msg("\033[1;31mVous n'êtes pas opérateurs sur le channel " + channelName + ".\033[0m");
+        return;
+    }
+
     std::string currentTopic = channel->getTopic();
 
     if (args.size() > 2) {

@@ -27,7 +27,8 @@ void Server::do_action_invite(Client *client, std::vector<std::string> args) {
         return;
     }
 
-    theChannel->add_client(theClient);
+    theChannel->add_invite(client);
+//    theChannel->add_client(theClient);
     client->send_msg("vous avez invité " + user_name + "à rejoindre le canal" + channel_name);
     theClient->send_msg("vous avez été invité à rejoindre le canal" + channel_name);
 }

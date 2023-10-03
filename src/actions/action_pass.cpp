@@ -6,10 +6,10 @@ void Server::do_action_pass(Client *client, std::vector<std::string> args) {
     } else {
         if (getPass() == args.back()) {
             client->setVerified(true);
-            client->send_msg("Mot de passe correct.\n"
+            client->send_msg("\033[1;32mMot de passe correct.\n\033[0m"
                              "Choisissez votre surnom avec '/NICK <surnom>'");
         } else {
-            client->send_msg("Mot de passe incorrect. Veuillez recommencer.");
+            client->send_msg("\033[1;31mMot de passe incorrect. Veuillez recommencer.\033[0m");
         }
     }
 }

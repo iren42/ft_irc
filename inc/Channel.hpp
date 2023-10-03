@@ -15,8 +15,14 @@ private:
     std::string _name;
     std::string _topic;
 
+    bool _mode_invite;
+    bool _mode_topicOp;
+    std::string _lockPass;
+    int _limit;
+
     std::vector<Client *> _clients;
     std::vector<Client *> _ops;
+    std::vector<Client *> _invite;
 
 public:
 
@@ -37,6 +43,8 @@ public:
 
     bool is_op(const Client *client) const;
 
+    bool is_invite(const Client *client) const;
+
     size_t get_nb_clients() const;
 
     size_t get_nb_ops() const;
@@ -49,7 +57,8 @@ public:
 
     void setTopic(const std::string &topic);
 
-    void add_client(Client *client);
+    bool add_client(Client *client);
+    void add_invite(Client *client);
 
     void add_op(Client *client);
 
@@ -57,7 +66,25 @@ public:
 
     void remove_op(Client *client);
 
+    void remove_invite(Client *client);
+
     bool isEmpty();
+
+    bool isModeInvite() const;
+
+    void setModeInvite(bool modeInvite);
+
+    bool isModeTopicOp() const;
+
+    void setModeTopicOp(bool modeTopicOp);
+
+    const std::string &getLockPass() const;
+
+    void setLockPass(const std::string &lockPass);
+
+    int getLimit() const;
+
+    void setLimit(int limit);
 };
 
 
