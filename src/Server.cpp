@@ -49,9 +49,8 @@ int Server::new_connection(struct epoll_event &event) {
     }
   }
   // mark new socket fd as non -blocking
-  flags = fcntl(infd, F_GETFL, 0);
-  flags |= O_NONBLOCK;
-  fcntl(infd, F_SETFL, flags);
+ if (fcntl(infd, F_SETFL, O_NONBLOCK) < 0)
+    throw std::runtime_error("Error while setting socket to non-blocking mode");
 
   char hostname[128];
   int returngetname;
@@ -226,7 +225,7 @@ void Server::generate_socket() {
   if (fcntl(_sockfd, F_SETFL, O_NONBLOCK) <
       0) { // fcntl fonction modifiant les attribut socket, F_SETFL pour set un
            // mode, O_NONBLOCK pour definir le mode a set (non bloquant)
-    throw std::runtime_error("Error while setting spcket to non-blocking mode");
+    throw std::runtime_error("Error while setting socket to non-blocking mode");
   }
 
   // initialisation de la structure sockaddr_in pour definir les parametre de
