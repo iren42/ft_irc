@@ -153,7 +153,6 @@ void Server::disconnect(Client *pClient)
 	close(pClient->getFd());
 }
 
-
 void handleSig(int sigint)
 {
 	std::cout << std::endl << "Exsiting server..." << std::endl;
