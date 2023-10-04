@@ -43,12 +43,12 @@ void Server::client_disconnect(Client *client) {
 }
 
 std::string Server::handle_client(int client_fd, Client *client) {
-  if (_swtch == 0) {
-    _msg.clear();
+  if (client->get_swtch() == 0) {
+std::cout << "************** clear [" << client->get_msg() << "]" << std::endl;
+    client->get_msg().clear();
   }
   char tmp[100] = {0};
-  int r = recv(client_fd, tmp, 100,
-               0); // recevoir jusque 100octet de donnée de ckient_fd
+  int r = recv(client_fd, tmp, 100, 0); // recevoir jusque 100octet de donnée de ckient_fd
   std::cout << "recv = '" << tmp << "'" << std::endl;
   if (r == -1) {
     perror("Error while receiving data.");
@@ -59,22 +59,24 @@ std::string Server::handle_client(int client_fd, Client *client) {
     client_disconnect(client);
     return std::string();
   }
-  _swtch = 1;
-  _msg.append(tmp, r);
+  client->swtch_on();
+  client->get_msg().append(tmp, r);
 
   // recherche de la premiere occurence de "\r\n" ou "\n"
-  size_t newline = this->_msg.find("\r\n");
+  size_t newline = client->get_msg().find("\r\n");
   if (newline ==
       std::string::npos) { // npos = find n'a pas trouvé ce qu'il cherchait
-    newline = _msg.find("\n");
+    newline = client->get_msg().find("\n");
   }
   // si une newline est trouvée dans le tampon de msg = msg valide
   if (newline != std::string::npos) {
-    _swtch = 0;
-    _msg.erase(newline);
-    return (_msg);
+    client->swtch_off();
+    client->get_msg().erase(newline);
+std::cout << "************** _swtch = 0" << std::endl;
+    return (client->get_msg());
   }
-  return std::string();
+std::cout << "************* CEPABON" << std::endl;
+  return std::string("");
 }
 
 void Server::parse_action(std::string message, Client *client) {

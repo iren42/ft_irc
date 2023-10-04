@@ -11,7 +11,6 @@ Server::Server(int port, std::string pass) : _port(port), _pass(pass) {
   std::cout << "Server constructor called" << std::endl;
   init_map_action();
   running = 1;
-  _swtch = 0;
 }
 
 const std::string &Server::getPass() const { return (_pass); }
@@ -77,7 +76,10 @@ int Server::new_connection(struct epoll_event &event) {
 
 ssize_t Server::ser_recv(struct epoll_event &event) {
   Client *client = _map_client[event.data.fd];
+std::cout << "*********************** ser_recv 1" <<std::endl;
+  client->swtch_off();
   std::string message = handle_client(event.data.fd, client);
+std::cout << "*********************** ser_recv 2" <<std::endl;
   if (!message[0]) {
     return (0);
   }
@@ -124,7 +126,7 @@ void Server::disconnect(Client *pClient) {
     if (it->second == pClient)
       _map_client.erase(it++);
     else
-      ++it;
+      ++it;std::cout << "*********************** ser_recv 1" <<std::endl;
   }
 
   std::map<std::string, Channel *>::iterator it2 = _map_channel.begin();
@@ -169,7 +171,7 @@ void Server::launch() {
     close(_epollfd);
     return;
   }
-  _swtch = 0;
+
   while (running) {
     std::cout << "Polling for input..." << std::endl;
     event_count = epoll_wait(_epollfd, events, MAX_EVENTS, -1);
@@ -178,7 +180,9 @@ void Server::launch() {
       break;
     }
     i = 0;
+std::cout << "********************bloqué avant la boucle launch" <<std::endl;
     while (i < event_count) {
+std::cout << "********************boucle launch" <<std::endl;
       if (events[i].data.fd == _sockfd) {
         if (new_connection(event) == -1) {
           running = 0;
@@ -197,6 +201,7 @@ void Server::launch() {
       i++;
     }
   }
+std::cout << "********************sortie boucle launch" <<std::endl;
   free(events);
   if (close(_epollfd))
     std::cerr << "Failed to close epoll file descriptor" << std::endl;
