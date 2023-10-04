@@ -34,7 +34,7 @@ void Server::do_action_names(Client *client, std::vector<std::string> args) {
 
     message += ss.str();
     message += "----------------------------------------\n";
-    message += listeUtilisateurs + "\n";
+    message += listeUtilisateurs;
     message += "----------------------------------------";
     client->send_msg(message);
 }
