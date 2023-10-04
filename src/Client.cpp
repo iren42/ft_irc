@@ -8,7 +8,7 @@
 
 Client::Client() : _fd(-1) {}
 
-Client::Client(std::string hostname, int fd, Server *s) : _hostname(hostname), _fd(fd), _serv(s) {
+Client::Client(std::string hostname, int fd, Server *s) : _hostname(hostname), _fd(fd), _serv(s), _verified(false) {
     _nickname = "undefined";
 }
 
