@@ -278,4 +278,5 @@ void Server::generate_socket()
 	}
 
 	std::cout << "Server socket has been generated\n";
+
 }
