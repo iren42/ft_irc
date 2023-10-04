@@ -162,3 +162,11 @@ std::ostream &operator<<(std::ostream &outFile, Client const &client) {
 
     return outFile;
 }
+
+std::string &Client::get_msg() {return(this->_msg);}
+
+int	Client::get_swtch() {return(_swtch);}
+
+void	Client::swtch_on() {_swtch = 1;}
+
+void	Client::swtch_off() {_swtch = 0;}

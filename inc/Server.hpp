@@ -43,9 +43,7 @@ private:
   int _sockfd;
   int _epollfd;
   int _port;
-  int _swtch; // 0 = nv message, 1 =message en cours;
 
-  std::string _msg;
   std::string _pass;
   std::map<std::string, void (Server::*)(Client *, std::vector<std::string>)>
       _map_cmd;
