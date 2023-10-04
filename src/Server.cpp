@@ -29,10 +29,9 @@ int Server::epoll_add_fd(int fd, int event_type, struct epoll_event &event) {
 }
 
 int Server::new_connection(struct epoll_event &event) {
-  struct sockaddr in_addr = {AF_INET, 0, 0, 0};
+  struct sockaddr in_addr = {AF_INET, {0, 0, 0}};
   socklen_t in_len;
   int infd;
-  int flags;
 
 	// create new socket fd from pending listening socket queue
 	infd = accept(_sockfd, &in_addr, &in_len);
@@ -175,7 +174,7 @@ void Server::launch() {
 		close(_epollfd);
 		return;
 	}
-	_swtch = 0;
+
 	while (running)
 	{
 		std::cout << "Polling for input..." << std::endl;

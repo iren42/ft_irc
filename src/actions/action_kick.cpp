@@ -10,8 +10,6 @@ void Server::do_action_kick(Client *client, std::vector<std::string> args) {
     std::string channelName = args[1];
     std::string userName = args[2];
 
-    CHANNELS::iterator it = _map_channel.find(channelName);
-
     Channel *theChannel = get_channel_by_name(channelName);
 
 

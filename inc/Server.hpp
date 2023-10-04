@@ -25,6 +25,7 @@ class Server;
 #include "Channel.hpp"
 #include "Client.hpp"
 #include "Colors.hpp"
+#include "Header.hpp"
 
 #define MAX_EVENTS 64
 #define READ_SIZE 100

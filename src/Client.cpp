@@ -139,7 +139,7 @@ void Client::send_msg(std::string msg, std::string sender) {
         }
     }
 
-    char messageWithSender[512];
+    char messageWithSender[LENGTH_MSG];
     std::string format = "[" + colorCode + "%-12s\033[0m]: %s\r\n";
     snprintf(messageWithSender, sizeof(messageWithSender), format.c_str(), sender.c_str(), formattedMsg.c_str());
 

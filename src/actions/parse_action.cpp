@@ -34,56 +34,67 @@ void Server::client_disconnect(Client *client)
 			chan_to_remove.push_back(it->second->getName());
 	}
 
-	for (it_to_remove = chan_to_remove.begin(); it_to_remove != chan_to_remove.end(); ++it_to_remove) {
-		_map_channel.erase(*it_to_remove);}
+	for (it_to_remove = chan_to_remove.begin();
+		 it_to_remove != chan_to_remove.end(); ++it_to_remove)
+	{
+		_map_channel.erase(*it_to_remove);
+	}
 
-    epoll_ctl(_epollfd, EPOLL_CTL_DEL, fd, 0); //retrait du client de l'evenement epoll_ctl
-    delete client;
-    _map_client.erase(fd);
-    close(fd);
-    std::cout << "Client [" << fd << "] disconnected." << std::endl;
-    return;
+	epoll_ctl(_epollfd, EPOLL_CTL_DEL, fd,
+			  0); //retrait du client de l'evenement epoll_ctl
+	delete client;
+	_map_client.erase(fd);
+	close(fd);
+	std::cout << "Client [" << fd << "] disconnected." << std::endl;
+	return;
 }
 
-std::string Server::handle_client(int client_fd, Client *client) {
-  if (client->get_swtch() == 0) {
-std::cout << "************** clear [" << client->get_msg() << "]" << std::endl;
-    client->get_msg().clear();
-  }
-  char tmp[100] = {0};
-  int r = recv(client_fd, tmp, 100, 0); // recevoir jusque 100octet de donnée de ckient_fd
-  std::cout << "recv = '" << tmp << "'" << std::endl;
-  if (r == -1) {
-    perror("Error while receiving data.");
-    return std::string();
-  } else if (r == 0) {
-    std::cout << "client disconnection"
-              << std::endl; // GERER LA DISCONNEXION Client
-    client_disconnect(client);
-    return std::string();
-  }
-  client->swtch_on();
-  client->get_msg().append(tmp, r);
+std::string Server::handle_client(int client_fd, Client *client)
+{
+	if (client->get_swtch() == 0)
+	{
+		std::cout << "************** clear [" << client->get_msg() << "]"
+				  << std::endl;
+		client->get_msg().clear();
+	}
+	char tmp[100] = {0};
+	int r = recv(client_fd, tmp, 100,
+				 0); // recevoir jusque 100octet de donnée de ckient_fd
+	std::cout << "recv = '" << tmp << "'" << std::endl;
+	if (r == -1)
+	{
+		perror("Error while receiving data.");
+		return std::string();
+	} else if (r == 0)
+	{
+		std::cout << "client disconnection"
+				  << std::endl; // GERER LA DISCONNEXION Client
+		client_disconnect(client);
+		return std::string();
+	}
+	client->swtch_on();
+	client->get_msg().append(tmp, r);
 
-  // recherche de la premiere occurence de "\r\n" ou "\n"
-  size_t newline = client->get_msg().find("\r\n");
-  if (newline ==
-      std::string::npos) { // npos = find n'a pas trouvé ce qu'il cherchait
-    newline = client->get_msg().find("\n");
-  }
-  // si une newline est trouvée dans le tampon de msg = msg valide
-  if (newline != std::string::npos) {
-    client->swtch_off();
-    client->get_msg().erase(newline);
-std::cout << "************** _swtch = 0" << std::endl;
-    return (client->get_msg());
-  }
-std::cout << "************* CEPABON" << std::endl;
-  return std::string("");
+	// recherche de la premiere occurence de "\r\n" ou "\n"
+	size_t newline = client->get_msg().find("\r\n");
+	if (newline ==
+		std::string::npos)
+	{ // npos = find n'a pas trouvé ce qu'il cherchait
+		newline = client->get_msg().find("\n");
+	}
+	// si une newline est trouvée dans le tampon de msg = msg valide
+	if (newline != std::string::npos)
+	{
+		client->swtch_off();
+		client->get_msg().erase(newline);
+		return (client->get_msg());
+	}
+	return std::string("");
 }
 
-void Server::parse_action(std::string message, Client *client) {
-  std::string firstWord;
+void Server::parse_action(std::string message, Client *client)
+{
+	std::string firstWord;
 
 	size_t spacePosition = message.find(' ');
 	if (spacePosition != std::string::npos)
@@ -91,14 +102,14 @@ void Server::parse_action(std::string message, Client *client) {
 	else
 		firstWord = message;
 
-	for (int i = 0; i < firstWord.length(); i++)
+	for (unsigned int i = 0; i < firstWord.length(); i++)
 		firstWord.at(i) = (char) std::tolower(firstWord.at(i));
 
-  std::vector<std::string> arguments;
-  std::string motActuel;
+	std::vector<std::string> arguments;
+	std::string motActuel;
 
 	// TODO a ameliorer avec les fonctions cpp
-	for (int i = 0; i < message.length(); i++)
+	for (unsigned int i = 0; i < message.length(); i++)
 		if (message.at(i) != ' ')
 			motActuel += message.at(i);
 		else if (!motActuel.empty())
@@ -107,8 +118,8 @@ void Server::parse_action(std::string message, Client *client) {
 			motActuel.clear();
 		}
 
-  if (!motActuel.empty())
-    arguments.push_back(motActuel);
+	if (!motActuel.empty())
+		arguments.push_back(motActuel);
 
 
 	if (_map_cmd.find(firstWord) != _map_cmd.end())
@@ -135,7 +146,8 @@ void Server::parse_action(std::string message, Client *client) {
 		((this->*_map_cmd[firstWord]))(client, arguments);
 	} else
 	{
-		client->send_msg(firstWord + " n'est pas une commande. Vous pouvez utiliser la commande /HELP");
+		client->send_msg(firstWord +
+						 " n'est pas une commande. Vous pouvez utiliser la commande /HELP");
 
 	}
 }

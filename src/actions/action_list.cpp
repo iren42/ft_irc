@@ -6,7 +6,7 @@
 
 void Server::do_action_list(Client *client, std::vector<std::string> args) {
     size_t mapChannelSize = _map_channel.size();
-
+	(void) args;
     std::stringstream ss;
     ss << "Liste des canaux [" << mapChannelSize << "]" << std::endl;;
     ss << "--------------------------------" << std::endl;;

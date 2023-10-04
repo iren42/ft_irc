@@ -57,6 +57,8 @@ public:
 
     bool isVerified() const;
 
+	bool isNickSet() const;
+
     void setNickname(const std::string &nickname);
 
     void setRealname(const std::string &realname);
