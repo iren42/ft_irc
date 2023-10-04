@@ -26,7 +26,7 @@ void Server::do_action_nick(Client *client, std::vector<std::string> args) {
     }
 
     client->setNickname(nickname);
-    std::string msg = "Nickname changer en ";
+    std::string msg = "Nickname changé en ";
     msg.append(args[1]);
     client->send_msg(msg);
 
