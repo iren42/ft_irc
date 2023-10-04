@@ -3,24 +3,30 @@
 void Server::do_action_join(Client *client, std::vector<std::string> args) {
 
     if (args.size() != 2) {
-        client->send_msg("Erreur: Format : JOIN <nom du canal> [mot de passe] ");
+        client->send_msg(BOLDRED + "Erreur: Format : JOIN <nom du canal> [mot de passe] "+RESET);
         return;
     }
 
+
+	if (args[1][0] != '#'){
+		client->send_msg(BOLDRED + "Erreur: Le nom du canal doit commencer par # "+RESET);
+		return;
+	}
+
+
     std::string canal_name = args[1];
 
-    std::map<std::string, Channel *>::iterator it = _map_channel.find(canal_name);
+    CHANNELS::iterator it = _map_channel.find(canal_name);
 
     if (it != _map_channel.end()) {
-        //Le channel existe.
         Channel *channel = it->second;
 
         if (channel->getLockPass() != "") {
             if (args.size() != 3)
-                client->send_msg("\033[1;31mLe channel " + canal_name + " a un mot de passe.\033[0m");
+                client->send_msg(BOLDRED + "Le channel " + canal_name + " a un mot de passe."+RESET);
             std::string mdp = args[3];
             if (mdp != channel->getLockPass())
-                client->send_msg("\033[1;31mMauvais mot de passe.\033[0m");
+                client->send_msg(BOLDRED + "Mauvais mot de passe."+RESET);
         }
 
         if (channel->is_client(client))

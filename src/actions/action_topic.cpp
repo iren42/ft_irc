@@ -18,7 +18,7 @@ void Server::do_action_topic(Client *client, std::vector<std::string> args) {
 
     if (channel->isModeTopicOp() && !channel->is_op(client))
     {
-        client->send_msg("\033[1;31mVous n'êtes pas opérateurs sur le channel " + channelName + ".\033[0m");
+        client->send_msg(BOLDRED + "Vous n'êtes pas opérateurs sur le channel " + channelName + "."+RESET);
         return;
     }
 

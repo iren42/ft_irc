@@ -18,7 +18,7 @@ void Server::do_action_invite(Client *client, std::vector<std::string> args) {
     }
 
     if (!theClient) {
-        client->send_msg("\033[1;31mLe client " + user_name + " n'a pas été trouvé.\033[0m");
+        client->send_msg(BOLDRED + "Le client " + user_name + " n'a pas été trouvé."+RESET);
         return;
     }
 

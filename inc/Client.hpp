@@ -4,6 +4,8 @@
 #ifndef FT_IRC_CLIENT_H
 #define FT_IRC_CLIENT_H
 
+#define LENGTH_MSG 8192
+
 #include <iostream>
 #include <string>
 #include <functional>
@@ -13,64 +15,66 @@
 
 class Server;
 
-class Client {
+class Client
+{
 private:
-    std::string _nickname;
-    std::string _realname;
-    std::string _hostname;
-    std::string _username;
-    int _fd;
-    Server *_serv;
-    bool _verified;
+	std::string _nickname;
+	std::string _realname;
+	std::string _hostname;
+	std::string _username;
+	int _fd;
+	Server *_serv;
+	bool _verified;
 
 
+	std::string generateRandomColor(const std::string &seed);
 
-    std::string generateRandomColor(const std::string &seed);
+	unsigned int strhash(const char *str);
 
-    unsigned int strhash(const char *str);
-
-    Client();
+	Client();
 
 public:
-    Client(std::string hostname, int fd, Server *);
+	Client(std::string hostname, int fd, Server *);
 
-    Client(const Client &client);
+	Client(const Client &client);
 
-    Client &operator=(const Client &client);
+	Client &operator=(const Client &client);
 
-    virtual ~Client();
+	virtual ~Client();
 
-    const std::string &getNickname() const;
+	const std::string &getNickname() const;
 
-    const std::string &getRealname() const;
+	const std::string &getRealname() const;
 
-    const std::string &getHostname() const;
+	const std::string &getHostname() const;
 
-    const std::string &getUsername() const;
+	const std::string &getUsername() const;
 
-    int getFd() const;
+	int getFd() const;
 
-    Server *getServer() const;
+	Server *getServer() const;
 
-    bool isVerified() const;
+	bool isVerified() const;
 
-    void setNickname(const std::string &nickname);
+	bool isNickSet() const;
 
-    void setRealname(const std::string &realname);
+	void setNickname(const std::string &nickname);
 
-    void setHostname(const std::string &hostname);
+	void setRealname(const std::string &realname);
 
-    void setUsername(const std::string &hostname);
+	void setHostname(const std::string &hostname);
 
-    void setVerified(bool);
+	void setUsername(const std::string &hostname);
 
-    void setFd(int fd);
+	void setVerified(bool);
 
-    void send_msg(std::string msg);
+	void setFd(int fd);
 
-    void send_msg(std::string msg, std::string sender);
+	void send_msg(std::string msg);
 
-    void disconnect();
+	void send_msg(std::string msg, std::string sender);
+
+	void disconnect();
 };
 
 std::ostream &operator<<(std::ostream &outFile, Client const &client);

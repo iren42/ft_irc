@@ -24,6 +24,7 @@ class Server;
 
 #include "Channel.hpp"
 #include "Client.hpp"
+#include "Colors.hpp"
 
 #define MAX_EVENTS 64
 #define READ_SIZE 100
@@ -48,8 +49,8 @@ private:
   std::string _pass;
   std::map<std::string, void (Server::*)(Client *, std::vector<std::string>)>
       _map_cmd;
-  std::map<int, Client *> _map_client;
-  std::map<std::string, Channel *> _map_channel;
+  CLIENTS _map_client;
+  CHANNELS _map_channel;
 
   Server(const Server &);
 

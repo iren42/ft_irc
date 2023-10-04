@@ -10,7 +10,7 @@ void Server::do_action_kick(Client *client, std::vector<std::string> args) {
     std::string channelName = args[1];
     std::string userName = args[2];
 
-    std::map<std::string, Channel *>::iterator it = _map_channel.find(channelName);
+    CHANNELS::iterator it = _map_channel.find(channelName);
 
     Channel *theChannel = get_channel_by_name(channelName);
 
@@ -28,7 +28,7 @@ void Server::do_action_kick(Client *client, std::vector<std::string> args) {
     Client *badClient = get_client_by_nickname(userName);
 
     if (!badClient) {
-        client->send_msg("\033[1;31mLe client " + userName + " n'a pas été trouvé.\033[0m");
+        client->send_msg(BOLDRED + "Le client " + userName + " n'a pas été trouvé."+RESET);
         return;
     }
 

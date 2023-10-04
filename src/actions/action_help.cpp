@@ -3,8 +3,8 @@
 void Server::do_action_help(Client *client, std::vector<std::string> args) {
   if (args.size() == 1) {
     client->send_msg("*** Liste de toutes les commandes IRC :\n*** NICK, USER, "
-                     "JOIN, PART, MSG, QUIT, LIST, WHOIS,\n*** ME, PASS, KICK, "
-                     "INVITE, TOPIC, MODE, NAMES, NOTICE, INTRO\nEtes-vous "
+                     "JOIN, PART, MSG, QUIT, LIST, WHOIS,\n*** PASS, KICK, "
+                     "INVITE, TOPIC, MODE, NAMES, NOTICE\nEtes-vous "
                      "un nouvel utilisateur ? Essayez '/HELP intro'");
   } else if (args.size() > 2) {
     client->send_msg("Syntaxe : /HELP [nom de la commande]\n"
@@ -24,8 +24,8 @@ void Server::do_action_help(Client *client, std::vector<std::string> args) {
           "Vous ne savez plus par ou commencer ? Essayez '/HELP NICK'");
     } else if (cmd == "nick") {
       client->send_msg(
-          "La commande NICK change le surnom sous lequel vous etes connu.\nLes "
-          "surnoms sont limites a 9 caracteres.\n"
+          "La commande NICK change le nickmame sous lequel vous etes connu.\nLes "
+          "nickmames sont limites a 9 caracteres.\n"
           "Syntaxe : /NICK <VotreSurnom>");
     } else if (cmd == "user") {
       client->send_msg(
@@ -46,7 +46,7 @@ void Server::do_action_help(Client *client, std::vector<std::string> args) {
           "Syntaxe : /PART <canal> [<message>]");
     } else if (cmd == "privmsg") {
       client->send_msg(
-          "La commade PRIVMSG envoie un message prive a <surnom>.\n"
+          "La commande PRIVMSG envoie un message prive a <nickmame>.\n"
           "Syntaxe : /PRIVMSG <surnom | canal> <message>\nPar "
           "exemple, '/PRIVMSG John Salut John'"
           "\n/PRIVMSG #unCanal Salut les membres de unCanal !");
@@ -64,11 +64,6 @@ void Server::do_action_help(Client *client, std::vector<std::string> args) {
       client->send_msg(
           "La commande WHOIS affiche des informations sur le surnom specifie.\n"
           "Syntaxe : /WHOIS <surnom>");
-    } else if (cmd == "me") {
-      client->send_msg(
-          "La commande ME affiche un message en rose dans un canal.\n"
-          "Syntaxe : /ME <message>\nPar exemple, '/ME chante Here "
-          "Comes The Sun - The Beatles'");
     } else if (cmd == "kick") {
       client->send_msg(
           "La commande KICK retire de force un utilisateur d'un canal. "

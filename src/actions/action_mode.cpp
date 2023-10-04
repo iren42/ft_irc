@@ -13,7 +13,7 @@ void
 Server::do_action_mode_channel_limit(Client *client, Channel *channel, std::string cmd, std::vector<std::string> args) {
     if (cmd == "-l") {
         channel->setLimit(-1);
-        client->send_msg("\033[1;32mLa limite du channel " + channel->getName() + " a été retiré.\033[0m");
+        client->send_msg(BOLDGREEN + "La limite du channel " + channel->getName() + " a été retiré."+RESET);
         return;
     } else if (cmd == "+l") {
         if (args.size() < 4) {
@@ -28,7 +28,7 @@ Server::do_action_mode_channel_limit(Client *client, Channel *channel, std::stri
         ss << limit;
 
         client->send_msg(
-                "\033[1;32mLa limite du channel " + channel->getName() + " a été fixé à " + ss.str() + ".\033[0m");
+                BOLDGREEN + "La limite du channel " + channel->getName() + " a été fixé à " + ss.str() + "."+RESET);
         return;
     }
 }
@@ -37,7 +37,7 @@ void
 Server::do_action_mode_channel_key(Client *client, Channel *channel, std::string cmd, std::vector<std::string> args) {
     if (cmd == "-k") {
         channel->setLockPass("");
-        client->send_msg("\033[1;32mLe mot de passe du channel " + channel->getName() + " a été retiré.\033[0m");
+        client->send_msg(BOLDGREEN + "Le mot de passe du channel " + channel->getName() + " a été retiré."+RESET);
         return;
     } else if (cmd == "+k") {
         if (args.size() < 4) {
@@ -48,7 +48,7 @@ Server::do_action_mode_channel_key(Client *client, Channel *channel, std::string
         channel->setLockPass(pass);
 
         client->send_msg(
-                "\033[1;32mLe channel " + channel->getName() + " a un nouveau mot de passe.\033[0m");
+                BOLDGREEN + "Le channel " + channel->getName() + " a un nouveau mot de passe."+RESET);
         return;
     }
 }
@@ -59,13 +59,13 @@ void Server::do_action_mode_channel(Client *client, std::vector<std::string> arg
     Channel *channel = get_channel_by_name(channelName);
 
     if (!channel) {
-        client->send_msg("\033[1;31mLe canal " + channelName + " n'a pas été trouvé.\033[0m");
+        client->send_msg(BOLDRED + "Le canal " + channelName + " n'a pas été trouvé."+RESET);
         return;
     }
 
     if (!channel->is_op(client)) {
         channel->setLimit(-1);
-        client->send_msg("\033[1;31mVous n'êtes pas opérateurs sur le channel " + channelName + ".\033[0m");
+        client->send_msg(BOLDRED + "Vous n'êtes pas opérateurs sur le channel " + channelName + "."+RESET);
         return;
     }
 
@@ -80,22 +80,22 @@ void Server::do_action_mode_channel(Client *client, std::vector<std::string> arg
 
     if (cmd == "+i") {
         channel->setModeInvite(true);
-        client->send_msg("\033[1;32mLe canal " + channel->getName() + " est passé en mode invité \033[0m");
+        client->send_msg(BOLDGREEN + "Le canal " + channel->getName() + " est passé en mode invité "+RESET);
     }
     if (cmd == "-i") {
         channel->setModeInvite(false);
-        client->send_msg("\033[1;32mLe canal " + channel->getName() + " est passé en mode non invité \033[0m");
+        client->send_msg(BOLDGREEN + "Le canal " + channel->getName() + " est passé en mode non invité "+RESET);
     }
 
     if (cmd == "+t") {
         channel->setModeTopicOp(true);
-        client->send_msg("\033[1;32mLes topics du canal " + channel->getName() +
-                         " ne peuvent plus être modifié que par les ops \033[0m");
+        client->send_msg(BOLDGREEN + "Les topics du canal " + channel->getName() +
+                         " ne peuvent plus être modifié que par les ops "+RESET);
     }
     if (cmd == "-t") {
         channel->setModeTopicOp(false);
         client->send_msg(
-                "\033[1;32mLes topics du canal " + channel->getName() + " peuvent être modifié par tous \033[0m");
+                BOLDGREEN + "Les topics du canal " + channel->getName() + " peuvent être modifié par tous "+RESET);
     }
 
     if (cmd == "-o" || cmd == "+o") {
@@ -108,27 +108,27 @@ void Server::do_action_mode_channel(Client *client, std::vector<std::string> arg
         if (cmd[0] == '+') {
             if (channel->is_op(opc)) {
                 client->send_msg(
-                        "\033[1;31mLe client " + opc->getNickname() + " est déjà op sur le canal" + channel->getName() +
-                        " \033[0m");
+                        BOLDRED + "Le client " + opc->getNickname() + " est déjà op sur le canal" + channel->getName() +
+                        RESET);
                 return;
             }
             client->send_msg(
-                    "\033[1;32mLe client " + opc->getNickname() + " est maintenant op sur le canal" +
+                    BOLDGREEN + "Le client " + opc->getNickname() + " est maintenant op sur le canal" +
                     channel->getName() +
-                    " \033[0m");
+                    RESET);
             channel->add_op(opc);
         }
         if (cmd[0] == '-') {
             if (!channel->is_op(opc)) {
                 client->send_msg(
-                        "\033[1;31mLe client " + opc->getNickname() + " n'est pas op sur le canal" +
+                        BOLDRED + "Le client " + opc->getNickname() + " n'est pas op sur le canal" +
                         channel->getName() +
-                        " \033[0m");
+                        RESET);
                 return;
             }
             client->send_msg(
-                    "\033[1;32mLe client " + opc->getNickname() + " n'est plus op sur le canal" + channel->getName() +
-                    " \033[0m");
+                    BOLDGREEN + "Le client " + opc->getNickname() + " n'est plus op sur le canal" + channel->getName() +
+                    RESET);
             channel->remove_op(opc);
         }
     }
