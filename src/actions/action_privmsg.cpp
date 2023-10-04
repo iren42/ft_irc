@@ -54,7 +54,8 @@ void Server::msgChannel(Client *sender, std::string target, std::vector<std::str
             std::vector<Client *> vec = (((*it).second)->getClients());
             std::vector<Client *>::iterator ita = vec.begin();
             while (ita != vec.end()) {
-                (*ita)->send_msg("[" + target + "] " + ": " + createMsg(args), sender->getNickname());
+				if ((*ita) != sender)
+                	(*ita)->send_msg("[" + target + "] " + ": " + createMsg(args), sender->getNickname());
                 ita++;
             }
         }
