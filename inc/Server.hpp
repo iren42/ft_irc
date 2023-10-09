@@ -109,8 +109,6 @@ private:
 
   void noticeClient(Client *, std::string, std::vector<std::string>);
 
-  std::string parseChannel(std::string);
-
   bool isInMapChannel(std::string);
 
   CLIENTS::iterator findClient(std::string);

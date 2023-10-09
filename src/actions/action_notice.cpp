@@ -4,7 +4,7 @@
 // that channel beforehand
 void Server::noticeChannel(Client *sender, std::string target,
                            std::vector<std::string> args) {
-  CHANNELS::iterator it = _map_channel.find(parseChannel(target));
+  CHANNELS::iterator it = _map_channel.find(target);
   if (it != _map_channel.end()) {
     if ((((*it).second)->is_client(sender)) == true) {
       std::vector<Client *> vec = (((*it).second)->getClients());
