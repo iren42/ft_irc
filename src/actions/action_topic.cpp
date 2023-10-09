@@ -1,8 +1,10 @@
 #include "Server.hpp"
 
-void Server::do_action_topic(Client *client, std::vector<std::string> args) {
+void Server::do_action_topic(Client *client, std::vector<std::string> args)
+{
 
-    if (args.size() < 2) {
+    if (args.size() < 2)
+    {
         client->send_msg("Utilisation : /TOPIC <nom-du-canal> [nouveau-sujet]");
         return;
     }
@@ -11,23 +13,27 @@ void Server::do_action_topic(Client *client, std::vector<std::string> args) {
 
     Channel *channel = get_channel_by_name(channelName);
 
-    if (!channel) {
+    if (!channel)
+    {
         client->send_msg("Le canal " + channelName + " n'existe pas.");
         return;
     }
 
-    if (channel->isModeTopicOp() && !channel->is_op(client))
-    {
-        client->send_msg(BOLDRED + "Vous n'êtes pas opérateurs sur le channel " + channelName + "."+RESET);
-        return;
-    }
 
     std::string currentTopic = channel->getTopic();
 
-    if (args.size() > 2) {
+    if (args.size() > 2)
+    {
+        if (channel->isModeTopicOp() && !channel->is_op(client))
+        {
+            client->send_msg(BOLDRED + "Vous n'êtes pas opérateurs sur le channel " + channelName + "." + RESET);
+            return;
+        }
+
         std::string newTopic = ""; // Supprime le deux-points
 
-        for (size_t i = 2; i < args.size(); i++) {
+        for (size_t i = 2; i < args.size(); i++)
+        {
             newTopic += args[i];
             if (i < args.size() - 1)newTopic += " ";
         }
@@ -37,7 +43,8 @@ void Server::do_action_topic(Client *client, std::vector<std::string> args) {
         std::string topicMessage = "Le sujet du canal a été changé par " + client->getNickname() + " : " + newTopic;
 
         for (std::vector<Client *>::const_iterator it2 = channel->getClients().begin();
-             it2 != channel->getClients().end(); ++it2) {
+             it2 != channel->getClients().end(); ++it2)
+        {
             (*it2)->send_msg(topicMessage);
         }
 

@@ -19,7 +19,7 @@ bool Channel::is_op(const Client *client) const {
 }
 
 bool Channel::is_invite(const Client *client) const {
-    for (std::vector<Client *>::const_iterator it = _ops.begin(); it != _ops.end(); ++it)
+    for (std::vector<Client *>::const_iterator it = _invite.begin(); it != _invite.end(); ++it)
         if (*it == client) return true;
 
     return false;
@@ -46,7 +46,10 @@ bool Channel::add_client(Client *client) {
         return false;
 
     if (_mode_invite && !is_invite(client))
+    {
+
         return false;
+    }
 
     if (_mode_invite)
         remove_invite(client);
@@ -92,8 +95,11 @@ void Channel::remove_op(Client *client) {
             break;
         }
     }
-    if (_ops.empty())
+    if (_ops.empty() && !_clients.empty())
+    {
+        _clients[0]->send_msg("Plus d'op sur le canal " + getName() + ". Vous avez été nommé op par défaut.");
         _ops.push_back(_clients[0]);
+    }
 }
 
 void Channel::remove_invite(Client *client) {

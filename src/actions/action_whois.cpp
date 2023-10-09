@@ -18,12 +18,12 @@ void Server::do_action_whois(Client *client, std::vector<std::string> args) {
         CLIENTS::iterator it = _map_client.begin();
         while (it != _map_client.end()) {
             if (((*it).second)->getNickname() == nick) {
-                buf.append(nick + " est " + (*it).second->getUsername() + "\n");
+                buf.append(nick + " est " + (*it).second->getRealname() + "\n");
                 buf.append(nick + " sur");
                 CHANNELS::iterator ita = _map_channel.begin();
                 while (ita != _map_channel.end()) {
                     if (((*ita).second)->is_client((*it).second)) {
-                        buf.append(" #" + (*ita).first);
+                        buf.append(" " + (*ita).first);
                     }
                     ita++;
                 }

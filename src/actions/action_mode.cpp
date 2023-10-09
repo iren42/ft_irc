@@ -48,7 +48,7 @@ Server::do_action_mode_channel_key(Client *client, Channel *channel, std::string
         channel->setLockPass(pass);
 
         client->send_msg(
-                BOLDGREEN + "Le channel " + channel->getName() + " a un nouveau mot de passe."+RESET);
+                BOLDGREEN + "Le channel " + channel->getName() + " a un nouveau mot de passe." +RESET);
         return;
     }
 }
@@ -103,7 +103,7 @@ void Server::do_action_mode_channel(Client *client, std::vector<std::string> arg
             client->send_msg("ERREUR : Utilisation : /MODE <nom canal> " + cmd + " <nickname>.");
             return;
         }
-        Client *opc = get_client_by_nickname(args[4]);
+        Client *opc = get_client_by_nickname(args[3]);
 
         if (cmd[0] == '+') {
             if (channel->is_op(opc)) {

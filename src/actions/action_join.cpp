@@ -2,7 +2,7 @@
 
 void Server::do_action_join(Client *client, std::vector<std::string> args) {
 
-    if (args.size() != 2) {
+    if (args.size() != 2 && args.size() != 3) {
         client->send_msg(BOLDRED + "Erreur: Format : JOIN <nom du canal> [mot de passe] "+RESET);
         return;
     }
@@ -23,10 +23,18 @@ void Server::do_action_join(Client *client, std::vector<std::string> args) {
 
         if (channel->getLockPass() != "") {
             if (args.size() != 3)
-                client->send_msg(BOLDRED + "Le channel " + canal_name + " a un mot de passe."+RESET);
-            std::string mdp = args[3];
+            {
+                client->send_msg(BOLDRED + "Le channel " + canal_name + " a un mot de passe." + RESET);
+                return;
+            }
+            std::string mdp = args[2];
             if (mdp != channel->getLockPass())
+            {
                 client->send_msg(BOLDRED + "Mauvais mot de passe."+RESET);
+                std::cout<< "real mdp : "<< channel->getLockPass()<<std::endl;
+                std::cout<< "given mdp : "<< mdp<<std::endl;
+                return;
+            }
         }
 
         if (channel->is_client(client))

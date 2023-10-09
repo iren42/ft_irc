@@ -37,6 +37,7 @@ void Server::client_disconnect(Client *client)
 	for (it_to_remove = chan_to_remove.begin();
 		 it_to_remove != chan_to_remove.end(); ++it_to_remove)
 	{
+        delete(_map_channel[*it_to_remove]);
 		_map_channel.erase(*it_to_remove);
 	}
 
@@ -57,9 +58,9 @@ std::string Server::handle_client(int client_fd, Client *client)
 				  << std::endl;
 		client->get_msg().clear();
 	}
-	char tmp[100] = {0};
-	int r = recv(client_fd, tmp, 100,
-				 0); // recevoir jusque 100octet de donnée de ckient_fd
+	char tmp[16384] = {0};
+	int r = recv(client_fd, tmp, 16384,
+				 0); // recevoir jusque 16384octet de donnée de ckient_fd
 	std::cout << "recv = '" << tmp << "'" << std::endl;
 	if (r == -1)
 	{

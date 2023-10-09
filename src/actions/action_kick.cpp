@@ -45,5 +45,6 @@ void Server::do_action_kick(Client *client, std::vector<std::string> args) {
     }
     theChannel->remove_client(badClient);
     badClient->send_msg(message);
+    client->send_msg("Client " + userName + " a bien été renvoyé");
 
 }

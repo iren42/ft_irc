@@ -3,7 +3,7 @@
 void Server::do_action_help(Client *client, std::vector<std::string> args) {
   if (args.size() == 1) {
     client->send_msg("*** Liste de toutes les commandes IRC :\n*** NICK, USER, "
-                     "JOIN, PART, MSG, QUIT, LIST, WHOIS,\n*** PASS, KICK, "
+                     "JOIN, PART, QUIT, LIST, WHOIS,\n*** PASS, KICK, "
                      "INVITE, TOPIC, MODE, NAMES, NOTICE\nEtes-vous "
                      "un nouvel utilisateur ? Essayez /HELP intro");
   } else if (args.size() > 2) {
@@ -86,10 +86,17 @@ void Server::do_action_help(Client *client, std::vector<std::string> args) {
                        "Syntaxe : /TOPIC <canal> [<sujet>]");
     } else if (cmd == "mode") {
       client->send_msg(
-          "La commande MODE est polyvalente. Elle peut etre utilisee pour "
-          "definir a la fois les modes utilisateur et les modes de canal.\n"
-          "Syntaxe : /MODE <canal> <drapeaux> [<arguments>]\n"
-          "/MODE <surnom> <drapeaux> (utilisateur)");
+              "La commande MODE est polyvalente. Elle peut être utilisée pour "
+              "définir à la fois les modes utilisateur et les modes de canal.\n"
+              "Syntaxe : /MODE <canal> <drapeaux> [<arguments>] (pour les canaux)\n\n"
+              "Modes de canal disponibles :\n"
+              "  +l <limite> : Définir la limite du canal à <limite> (utilisez -l pour supprimer la limite).\n"
+              "  +k <mdp> : Définir un mot de passe pour le canal (utilisez -k pour retirer le mot de passe).\n"
+              "  +i : Activer le mode invité (seuls les opérateurs peuvent inviter de nouveaux utilisateurs, utilisez "
+              "-i pour désactiver).\n"
+              "  +t : Activer le mode topic op (seuls les opérateurs peuvent modifier le sujet, utilisez -t pour désactiver).\n"
+              "  +o <nickname> : Donner le statut d'opérateur à un utilisateur sur le canal.\n"
+              "  -o <nickname> : Retirer le statut d'opérateur à un utilisateur sur le canal.");
     } else if (cmd == "help") {
       client->send_msg("La commande HELP affiche a un utilisateur une "
                        "description d'une commande.\n"
