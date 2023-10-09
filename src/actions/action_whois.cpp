@@ -5,7 +5,7 @@ void Server::do_action_whois(Client *client, std::vector<std::string> args) {
         return;
     if (args.size() != 2) {
         client->send_msg(
-                "Erreur : la syntaxe devrait etre '/WHOIS <nick>'\nExemple : /WHOIS john");
+                "Erreur : la syntaxe devrait etre /WHOIS <nick>\nExemple : 'WHOIS john'");
     }
         /*
          * Write this message on the client side:

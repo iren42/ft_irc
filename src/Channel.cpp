@@ -42,7 +42,7 @@ void Channel::setTopic(const std::string &topic) {
 }
 
 bool Channel::add_client(Client *client) {
-    if (get_nb_clients() >= _limit && _limit > 0)
+    if (get_nb_clients() >= static_cast<size_t>(_limit) && _limit > 0)
         return false;
 
     if (_mode_invite && !is_invite(client))

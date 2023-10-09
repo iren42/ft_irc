@@ -32,7 +32,7 @@ class Server;
 
 #define WELCOME_MSG                                                            \
   "Bonjour ! Quel est le mot de passe d'ircserv ? Veuillez utiliser la "       \
-  "commande '/PASS <mdp>'"
+  "commande /PASS <mdp>"
 
 extern int running;
 

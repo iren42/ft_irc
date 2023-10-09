@@ -55,7 +55,7 @@ int Server::new_connection(struct epoll_event &event) {
 	// mark new socket fd as non -blocking
 	if (fcntl(infd, F_SETFL, O_NONBLOCK) < 0)
 		throw std::runtime_error(
-				"Error while setting socket to non-blocking mode");
+				"Erreur lors de la configuration du socket en mode non-bloquant.");
 
   char hostname[128];
   int returngetname;
@@ -63,7 +63,7 @@ int Server::new_connection(struct epoll_event &event) {
                                    hostname, 100, NULL, 0, NI_NUMERICSERV)) !=
       0) {
     std::cout << returngetname << std::endl;
-    throw std::runtime_error("Error while getting hostname on new client.");
+    throw std::runtime_error("Erreur lors de la récupération du nom d'hôte sur le nouveau client.");
   }
 
 	Client *client = new Client(hostname, infd, this);
@@ -232,14 +232,14 @@ void Server::generate_socket() {
 	// flux (TCP), 0 pour mettre le protocole par defaut (IPv4)
 	if (_sockfd == -1)
 	{
-		throw std::runtime_error("Error while generating a socket");
+		throw std::runtime_error("Erreur lors de la génération du socket");
 	}
 	if (fcntl(_sockfd, F_SETFL, O_NONBLOCK) <
 		0)
 	{ // fcntl fonction modifiant les attribut socket, F_SETFL pour set un
 		// mode, O_NONBLOCK pour definir le mode a set (non bloquant)
 		throw std::runtime_error(
-				"Error while setting socket to non-blocking mode");
+				"Erreur lors de la configuration du socket en mode non-bloquant.");
 	}
 
   // initialisation de la structure sockaddr_in pour definir les parametre de
@@ -252,13 +252,13 @@ void Server::generate_socket() {
 
   // liage de la socket à l'adresse et au port
   if (bind(_sockfd, (struct sockaddr *)&_sock_serv, sizeof(_sock_serv)) == -1) {
-    throw std::runtime_error("Error While binding socket");
+    throw std::runtime_error("Erreur lors de la liaison du socket");
   } // bind() lie la socket a l'adresse et au port spécifié, msg si Erreur
 
   if (listen(_sockfd, _sock_serv.sin_port) < 0) {
     throw std::runtime_error(
-        "Error while putting the socket in listening mode");
+        "Erreur lors de la mise en mode d'écoute du socket.");
   }
 
-  std::cout << "Server socket has been generated\n";
+  std::cout << "Le socket serveur a été créé.\n";
 }
