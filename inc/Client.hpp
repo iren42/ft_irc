@@ -72,6 +72,9 @@ public:
     void setFd(int fd);
 
     void send_msg(std::string msg);
+    void send_brut(std::string msg);
+
+    void reply(std::string msg);
 
     void send_msg(std::string msg, std::string sender);
 

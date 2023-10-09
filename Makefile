@@ -8,6 +8,7 @@ SRC			= main.cpp \
 				Server.cpp\
 				Channel.cpp\
 				actions/parse_action.cpp\
+				actions/action_cap.cpp\
 				actions/action_nick.cpp\
 				actions/action_user.cpp\
 				actions/action_join.cpp\

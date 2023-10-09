@@ -9,7 +9,7 @@
 Client::Client() : _fd(-1) {}
 
 Client::Client(std::string hostname, int fd, Server *s) : _hostname(hostname), _fd(fd), _serv(s), _verified(false) {
-    _nickname = "undefined";
+    _nickname = "";
     _realname = "";
     _username = "";
     _msg = "";
@@ -65,9 +65,9 @@ int Client::getFd() const {
 bool Client::isVerified() const {
     return (_verified);
 }
-bool Client::isNickSet() const
-{
-	return (_nickname != "undefined");
+
+bool Client::isNickSet() const {
+    return (_nickname != "undefined");
 }
 
 Server *Client::getServer() const {
@@ -101,6 +101,20 @@ void Client::setVerified(bool value) {
 void Client::send_msg(std::string msg) {
     send_msg(msg, "Serveur");
 }
+
+void Client::reply(std::string msg) {
+
+    std::string msg2 = ":" + _nickname + "!" + _username + "@" + _hostname + " " + msg;
+    send_brut(msg2 + "\r\n");
+}
+
+void Client::send_brut(std::string msg) {
+    if (send(_fd, msg.c_str(), msg.length(), 0) < 0) {
+        throw std::runtime_error("Erreur lors de l'envoi du message au client.");
+    } else
+        std::cout << "Message sent :" << msg << std::endl;
+}
+
 
 unsigned int Client::strhash(const char *str) {
     unsigned int hash = 5381;
@@ -147,9 +161,8 @@ void Client::send_msg(std::string msg, std::string sender) {
     std::string format = "[" + colorCode + "%-12s\033[0m]: %s\r\n";
     snprintf(messageWithSender, sizeof(messageWithSender), format.c_str(), sender.c_str(), formattedMsg.c_str());
 
-    if (send(_fd, messageWithSender, strlen(messageWithSender), 0) < 0) {
-        throw std::runtime_error("Erreur lors de l'envoi du message au client.");
-    }
+    send_brut(messageWithSender);
+
 }
 
 void Client::disconnect() {
@@ -167,10 +180,10 @@ std::ostream &operator<<(std::ostream &outFile, Client const &client) {
     return outFile;
 }
 
-std::string &Client::get_msg() {return(this->_msg);}
+std::string &Client::get_msg() { return (this->_msg); }
 
-int	Client::get_swtch() {return(_swtch);}
+int Client::get_swtch() { return (_swtch); }
 
-void	Client::swtch_on() {_swtch = 1;}
+void Client::swtch_on() { _swtch = 1; }
 
-void	Client::swtch_off() {_swtch = 0;}
+void Client::swtch_off() { _swtch = 0; }
