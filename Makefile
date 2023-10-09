@@ -29,7 +29,7 @@ SRC			= main.cpp \
 
 # Compiler options
 CC			= c++
-CFLAGS		= -std=c++98 -Wall -Wextra -Werror
+CFLAGS		= -std=c++98 -Wall -Wextra -Werror -g
 
 OBJ			= $(patsubst %.cpp, %.o, $(SRC))
 OBJS		= $(addprefix ${OBJDIR}, ${OBJ})
