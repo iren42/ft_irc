@@ -14,7 +14,7 @@ void Server::do_action_user(Client *client, std::vector<std::string> args) {
         return;
     }
 
-    if (get_client_by_nickname(nickname)) {
+    if (get_client_by_nickname(nickname) && client->getNickname() != nickname) {
         client->send_msg("ERREUR : Le nickname " + nickname + " est déjà utilisé");
         return;
     }

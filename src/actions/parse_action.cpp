@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "replycode.h"
 
 void Server::init_map_action() {
     _map_cmd["cap"] = &Server::do_action_cap;
@@ -122,7 +123,7 @@ void Server::parse_action(std::string message, Client *client) {
             && firstWord != "user"
             && firstWord != "help") {
             if (!client->isVerified()) {
-                client->reply("451  : You have not registered");
+                client->reply(ERR_NOTREGISTERED(client->getNickname()));
                 client->send_msg(
                         BOLDRED + "Vous n'êtes pas identifié, utilisez la "
                                   "commande /PASS <mdp>." + RESET);
