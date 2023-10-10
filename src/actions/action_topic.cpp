@@ -48,8 +48,14 @@ void Server::do_action_topic(Client *client, std::vector<std::string> args)
             (*it2)->send_msg(topicMessage);
         }
 
+
         client->send_msg("Sujet du canal " + channelName + " mis à jour : " + newTopic);
     } else
         client->send_msg("Sujet actuel du canal " + channelName + " : " + currentTopic);
+
+    if (channel->getTopic() == "")
+        client->reply(RPL_NOTOPIC(client->getNickname(), channel->getName()));
+    else
+        client->reply(RPL_TOPIC(client->getPrefix(), channel->getName(), channel->getTopic()));
 
 }

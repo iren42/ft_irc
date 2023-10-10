@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "replycode.h"
 
 void Server::do_action_nick(Client *client, std::vector<std::string> args) {
     std::cout << "action nick" << std::endl;
@@ -11,8 +12,8 @@ void Server::do_action_nick(Client *client, std::vector<std::string> args) {
 
     if (nickname.length() > 9) nickname = nickname.substr(0, 9);
 
-    if (nickname == "undefined") {
-        client->send_msg("ERREUR : Le nickname undefined est interdit.");
+    if (nickname == "") {
+        client->send_msg("ERREUR : Le nickname vide est interdit.");
         return;
     }
 
@@ -26,7 +27,10 @@ void Server::do_action_nick(Client *client, std::vector<std::string> args) {
         return;
     }
 
+    if (client->getNickname() == "")
+        client->reply(RPL_WELCOME(nickname));
     client->setNickname(nickname);
+    client->reply(RPL_NICK(nickname));
     std::string msg = "Nickname changé en ";
     msg.append(args[1]);
     client->send_msg(msg);

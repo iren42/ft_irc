@@ -17,7 +17,9 @@ void Server::do_action_part(Client *client, std::vector<std::string> args)
 	if (channel)
 	{
 		channel->remove_client(client);
-		client->send_msg("Vous avez quitté le canal " + channelName);
+        channel->replyAll(RPL_PART(channel->getName(), ""));
+        client->send_msg("Vous avez quitté le canal " + channelName);
+
 		if (channel->isEmpty())
 		{
 			delete channel;

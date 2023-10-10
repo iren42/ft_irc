@@ -25,6 +25,7 @@ SRC			= main.cpp \
 				actions/action_topic.cpp\
 				actions/action_pass.cpp\
 				actions/action_notice.cpp\
+				actions/action_ping.cpp\
 
 
 

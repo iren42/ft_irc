@@ -7,21 +7,22 @@ class Server;
 #include <string>
 #include <sys/epoll.h>
 #include <sys/socket.h>
-
 #include <cstdio>  // printf
+
 #include <cstdlib> // malloc
 #include <cstring> // strncmp
-
 #include <algorithm>
+
 #include <fcntl.h>
 #include <map>
 #include <unistd.h>
-
 #include <arpa/inet.h>
+
 #include <errno.h>
 #include <signal.h>
 #include <vector>
 
+#include "replycode.h"
 #include "Channel.hpp"
 #include "Client.hpp"
 #include "Colors.hpp"
@@ -86,6 +87,8 @@ private:
     void do_action_quit(Client *, std::vector<std::string>);
 
     void do_action_list(Client *, std::vector<std::string>);
+
+    void do_action_ping(Client *, std::vector<std::string>);
 
     void do_action_whois(Client *, std::vector<std::string>);
 

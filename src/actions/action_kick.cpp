@@ -26,10 +26,11 @@ void Server::do_action_kick(Client *client, std::vector<std::string> args) {
     Client *badClient = get_client_by_nickname(userName);
 
     if (!badClient) {
-        client->send_msg(BOLDRED + "Le client " + userName + " n'a pas été trouvé."+RESET);
+        client->send_msg(BOLDRED + "Le client " + userName + " n'a pas été trouvé." + RESET);
         return;
     }
 
+    theChannel->replyAll((RPL_KICK(channelName, client->getNickname(), "")));
 
     std::string message = "Vous avez été renvoyé de " + channelName + " par " + client->getNickname();
 

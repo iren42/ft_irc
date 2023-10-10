@@ -45,8 +45,7 @@ bool Channel::add_client(Client *client) {
     if (get_nb_clients() >= static_cast<size_t>(_limit) && _limit > 0)
         return false;
 
-    if (_mode_invite && !is_invite(client))
-    {
+    if (_mode_invite && !is_invite(client)) {
 
         return false;
     }
@@ -82,7 +81,6 @@ void Channel::remove_client(Client *client) {
     for (std::vector<Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
         if (*it == client) {
             _clients.erase(it);
-            break;
         }
     }
     remove_op(client);
@@ -95,8 +93,7 @@ void Channel::remove_op(Client *client) {
             break;
         }
     }
-    if (_ops.empty() && !_clients.empty())
-    {
+    if (_ops.empty() && !_clients.empty()) {
         _clients[0]->send_msg("Plus d'op sur le canal " + getName() + ". Vous avez été nommé op par défaut.");
         _ops.push_back(_clients[0]);
     }
@@ -191,4 +188,10 @@ int Channel::getLimit() const {
 
 void Channel::setLimit(int limit) {
     _limit = limit;
+}
+
+void Channel::replyAll(std::string msg) {
+    for (std::vector<Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
+        (*it)->reply(msg);
+    }
 }

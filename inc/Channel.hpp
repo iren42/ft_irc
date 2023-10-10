@@ -58,6 +58,7 @@ public:
     void setTopic(const std::string &topic);
 
     bool add_client(Client *client);
+
     void add_invite(Client *client);
 
     void add_op(Client *client);
@@ -85,6 +86,8 @@ public:
     int getLimit() const;
 
     void setLimit(int limit);
+
+    void replyAll(std::string msg);
 };
 
 

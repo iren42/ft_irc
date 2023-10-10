@@ -1,16 +1,17 @@
 #include "Server.hpp"
 
 void Server::do_action_user(Client *client, std::vector<std::string> args) {
-    if (args.size() < 4) {
-        client->send_msg("ERREUR : La commande USER nécessite au moins trois arguments.");
+    if (args.size() < 5) {
+        client->send_msg("ERREUR : La commande USER nécessite au moins quates arguments.");
         return;
     }
 
     std::string nickname = args[1];
-    std::string hostname = args[2];
+    std::string username = args[2];
+    std::string hostname = args[3];
 
-    if (nickname == "undefined") {
-        client->send_msg("ERREUR : Le nickname undefined est interdit.");
+    if (nickname == "") {
+        client->send_msg("ERREUR : Le nickname vide est interdit.");
         return;
     }
 
@@ -25,7 +26,7 @@ void Server::do_action_user(Client *client, std::vector<std::string> args) {
     }
 
     std::string realname;
-    for (size_t i = 3; i < args.size(); i++) {
+    for (size_t i = 4; i < args.size(); i++) {
         realname += args[i];
         if (i < args.size() - 1) {
             realname += " ";
@@ -33,6 +34,7 @@ void Server::do_action_user(Client *client, std::vector<std::string> args) {
     }
 
     client->setNickname(nickname);
+    client->setUsername(username);
     if (hostname != "*")
         client->setHostname(hostname);
     client->setRealname(realname);

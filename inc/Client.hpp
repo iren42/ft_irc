@@ -21,11 +21,11 @@ private:
     std::string _realname;
     std::string _hostname;
     std::string _username;
-	std::string _msg;
+    std::string _msg;
     int _fd;
     Server *_serv;
     bool _verified;
-	int _swtch;
+    int _swtch;
 
 
     std::string generateRandomColor(const std::string &seed);
@@ -57,7 +57,7 @@ public:
 
     bool isVerified() const;
 
-	bool isNickSet() const;
+    bool isNickSet() const;
 
     void setNickname(const std::string &nickname);
 
@@ -72,21 +72,24 @@ public:
     void setFd(int fd);
 
     void send_msg(std::string msg);
+
     void send_brut(std::string msg);
 
     void reply(std::string msg);
+
+    std::string getPrefix();
 
     void send_msg(std::string msg, std::string sender);
 
     void disconnect();
 
-	int  get_swtch();
+    int get_swtch();
 
-	void swtch_on();
+    void swtch_on();
 
-	void swtch_off();
+    void swtch_off();
 
-	std::string& get_msg();
+    std::string &get_msg();
 };
 
 std::ostream &operator<<(std::ostream &outFile, Client const &client);

@@ -2,6 +2,7 @@
 #include "replycode.h"
 
 void Server::init_map_action() {
+    _map_cmd["ping"] = &Server::do_action_ping;
     _map_cmd["cap"] = &Server::do_action_cap;
     _map_cmd["pass"] = &Server::do_action_pass;
     _map_cmd["nick"] = &Server::do_action_nick;
@@ -127,9 +128,9 @@ void Server::parse_action(std::string message, Client *client) {
                 client->send_msg(
                         BOLDRED + "Vous n'êtes pas identifié, utilisez la "
                                   "commande /PASS <mdp>." + RESET);
-            } else if (client->getNickname() == "undefined")
+            } else if (client->getNickname() == "")
                 client->send_msg(
-                        BOLDRED + "Vous ne vous êtes pas renomé, utilisez la"
+                        BOLDRED + "Vous ne vous êtes pas renommé, utilisez la"
                                   "commande /NICK nickname." + RESET);
 
             return;

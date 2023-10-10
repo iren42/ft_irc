@@ -41,7 +41,7 @@ void Server::do_action_names(Client *client, std::vector<std::string> args)
             for (it3 = _map_channel.begin();
                  it3 != _map_channel.end() && !find; ++it3)
                 find = it3->second->is_client(client2);
-            if (!find && client2->getNickname()!= "undefined")
+            if (!find && client2->getNickname()!= "")
                 no_channel.push_back(client2);
 
             it2++;

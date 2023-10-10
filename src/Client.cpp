@@ -67,7 +67,7 @@ bool Client::isVerified() const {
 }
 
 bool Client::isNickSet() const {
-    return (_nickname != "undefined");
+    return (_nickname != "");
 }
 
 Server *Client::getServer() const {
@@ -102,9 +102,13 @@ void Client::send_msg(std::string msg) {
     send_msg(msg, "Serveur");
 }
 
+std::string Client::getPrefix() {
+    return ":" + _nickname + "!" + _username + "@" + _hostname;
+}
+
 void Client::reply(std::string msg) {
 
-    std::string msg2 = ":" + _nickname + "!" + _username + "@" + _hostname + " " + msg;
+    std::string msg2 = getPrefix() + " " + msg;
     send_brut(msg2 + "\r\n");
 }
 
