@@ -10,7 +10,7 @@ void Server::noticeChannel(Client *sender, std::string target,
             std::vector<Client *> vec = (((*it).second)->getClients());
             std::vector<Client *>::iterator ita = vec.begin();
 
-            (*it).second->replyAll(RPL_NOTICE(target, createMsg(args)));
+            (*it).second->replyAll(sender->getPrefix() + " "+RPL_NOTICE(target, createMsg(args)));
 
             while (ita != vec.end()) {
                 (*ita)->send_msg("[" + target + "] " + ": " + createMsg(args),

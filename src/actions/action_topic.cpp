@@ -52,13 +52,16 @@ void Server::do_action_topic(Client *client, std::vector<std::string> args)
         }
 
 
+
+        channel->replyAll(RPL_TOPIC(client->getPrefix(), channel->getName(), channel->getTopic()));
         client->send_msg("Sujet du canal " + channelName + " mis à jour : " + newTopic);
-    } else
+    } else {
         client->send_msg("Sujet actuel du canal " + channelName + " : " + currentTopic);
 
-    if (channel->getTopic() == "")
-        client->reply(RPL_NOTOPIC(client->getNickname(), channel->getName()));
-    else
-        client->reply(RPL_TOPIC(client->getPrefix(), channel->getName(), channel->getTopic()));
 
+        if (channel->getTopic() == "")
+            client->reply(RPL_NOTOPIC(client->getNickname(), channel->getName()));
+        else
+            client->reply(RPL_TOPIC(client->getPrefix(), channel->getName(), channel->getTopic()));
+    }
 }

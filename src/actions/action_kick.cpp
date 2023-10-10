@@ -34,7 +34,7 @@ void Server::do_action_kick(Client *client, std::vector<std::string> args) {
         return;
     }
 
-    theChannel->replyAll((RPL_KICK(channelName, client->getNickname(), "")));
+    theChannel->replyAll(client->getPrefix() + " " +(RPL_KICK(channelName, client->getNickname(), "")));
 
     std::string message = "Vous avez été renvoyé de " + channelName + " par " + client->getNickname();
 

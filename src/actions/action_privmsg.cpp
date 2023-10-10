@@ -44,7 +44,7 @@ void Server::msgChannel(Client *sender, std::string target,
         } else {
             std::vector<Client *> vec = (((*it).second)->getClients());
 
-            (*it).second->replyAll(RPL_PRIVMSG(target, createMsg(args)));
+            (*it).second->replyAll(sender->getPrefix() + " " + RPL_PRIVMSG(target, createMsg(args)));
 
             std::vector<Client *>::iterator ita = vec.begin();
             while (ita != vec.end()) {

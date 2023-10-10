@@ -7,7 +7,8 @@ void Server::do_action_mode(Client *client, std::vector<std::string> args) {
         return;
     }
 
-    return do_action_mode_channel(client, args);
+    if (args[1][0] == '#')
+        return do_action_mode_channel(client, args);
 }
 
 void

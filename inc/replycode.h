@@ -35,7 +35,7 @@
 #define RPL_NAMREPLY(source, channel, users)        "353 " + source + " = " + channel + " :" + users
 #define RPL_PING(command)                           "PONG :" + command
 #define RPL_ENDOFNAMES(source, channel)            "366 " + source + " " + channel + " :End of /NAMES list."
-#define RPL_JOIN(source, channel)                "JOIN :" + channel
+#define RPL_JOIN(channel)                       "JOIN :" + channel
 #define RPL_PRIVMSG(target, message)            "PRIVMSG " + target + " :" + message
 #define RPL_PART(channel, message)              "PART " + channel + " " + message
 #define RPL_NOTICE(target, message)             "NOTICE " + target + " :" + message

@@ -81,6 +81,7 @@ void Channel::remove_client(Client *client) {
     for (std::vector<Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
         if (*it == client) {
             _clients.erase(it);
+            break;
         }
     }
     remove_op(client);
@@ -192,6 +193,6 @@ void Channel::setLimit(int limit) {
 
 void Channel::replyAll(std::string msg) {
     for (std::vector<Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
-        (*it)->reply(msg);
+        (*it)->send_brut(msg + "\r\n");
     }
 }

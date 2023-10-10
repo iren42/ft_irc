@@ -25,8 +25,8 @@ void Server::do_action_nick(Client *client, std::vector<std::string> args) {
         return;
     }
 
-    if (nickname[0] == '#') {
-        client->send_msg("ERREUR : Le nickname ne peut commencer par #");
+    if (nickname[0] == '#' || nickname[0] == ':') {
+        client->send_msg("ERREUR : Le nickname ne peut commencer par # ou :");
 		client->reply(ERR_ERRONEUSNICKNAME(nickname));
         return;
     }
