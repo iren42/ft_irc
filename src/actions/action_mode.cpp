@@ -176,7 +176,7 @@ Server::do_action_mode_channel(Client *client, std::vector<std::string> args)
 		if (!opc || !channel->is_client(opc))
 		{
 			client->reply(ERR_USERNOTINCHANNEL(client->getNickname(),
-											   opc->getNickname(),
+											   args[3],
 											   channelName));
 			return;
 		}
