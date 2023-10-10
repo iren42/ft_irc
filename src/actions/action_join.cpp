@@ -49,7 +49,6 @@ void Server::do_action_join(Client *client, std::vector<std::string> args) {
                 client->send_msg("Vous venez de rejoindre le canal " + args[1]);
 
             } else {
-                client->reply(ERR_CHANNELISFULL(client->getNickname(), canal_name));
                 client->send_msg("Vous n'avez pas le droit de rejoindre ce canal");
                 return;
             }

@@ -22,6 +22,7 @@
 #define ERR_ALREADYREGISTERED(source)            "462 " + source + " :You may not reregister, you already have!"
 #define ERR_PASSWDMISMATCH(source)            "464 " + source + " :Is NOT the correct password for this server."
 #define ERR_CHANNELISFULL(source, channel)        "471 " + source + " " + channel + " :Cannot join channel (+l)"
+#define ERR_INVITEONLYCHAN(source, channel)        "473 " + source + " " + channel + " :Cannot join channel (+l)"
 #define ERR_UNKNOWNMODE(source, modechar)        "472 " + source + " " + modechar + " :is unknown char to me"
 #define ERR_BADCHANNELKEY(source, channel)        "475 " + source + " " + channel + " :Channel's key is incorrect"
 #define ERR_CHANOPRIVSNEEDED(source, channel)        "482 " + source + " " + channel + " :You're not channel creator or operator"

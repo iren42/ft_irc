@@ -10,6 +10,7 @@ Server::~Server()
 	CLIENTS::iterator it = _map_client.begin();
 	while (it != _map_client.end())
 	{
+		close(it->second->getFd());
 		delete it->second;
 		++it;
 	}
@@ -21,6 +22,9 @@ Server::~Server()
 		++it2;
 	}
 	std::cout << "Serveur fermé" << std::endl;
+	close(_epollfd);
+	close(_sockfd);
+
 }
 
 Server::Server(int port, std::string pass) : _port(port), _pass(pass)
@@ -187,8 +191,10 @@ void Server::disconnect(Client *pClient)
 		} else
 			++it2;
 	}
-	epoll_ctl(_epollfd, EPOLL_CTL_DEL, pClient->getFd(), 0);
-	close(pClient->getFd());
+
+	int fd = pClient->getFd();
+	epoll_ctl(_epollfd, EPOLL_CTL_DEL, fd, 0);
+	close(fd);
 	delete pClient;
 }
 
@@ -267,6 +273,7 @@ void Server::launch()
 	if (close(_sockfd))
 		throw std::runtime_error("failed to close socket file descriptor");
 }
+
 
 void Server::generate_socket()
 {

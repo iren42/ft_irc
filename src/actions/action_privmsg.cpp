@@ -64,7 +64,8 @@ void Server::msgClient(Client *sender, std::string target,
     if (receiver != _map_client.end())
     {
         ((*receiver).second)->send_msg(createMsg(args), sender->getNickname());
-        ((*receiver).second)->reply(RPL_PRIVMSG(target, createMsg(args)));
+		((*receiver).second)->send_brut(sender->getPrefix() + " " + RPL_PRIVMSG(((*receiver).second)->getNickname(), createMsg(args)) + "\r\n");
+
     }
     else
 	{

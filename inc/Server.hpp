@@ -2,6 +2,7 @@
 #define SERVER_HPP
 
 class Server;
+class Channel;
 
 #include <iostream>
 #include <string>
@@ -117,7 +118,6 @@ private:
 
 	bool isInMapChannel(std::string);
 
-	void send_all(std::string);
 
 	CLIENTS::iterator findClient(std::string);
 
@@ -154,6 +154,9 @@ public:
 	const std::string &getPass() const;
 
 	void disconnect(Client *pClient);
+
+	void send_all(std::string);
+
 };
 
 #endif

@@ -112,6 +112,10 @@ Server::do_action_mode_channel(Client *client, std::vector<std::string> args)
 		return;
 	}
 
+	std::string &cmd = args[2];
+	if (cmd == "+b" || cmd == "-b")
+		return;
+
 	if (!channel->is_op(client))
 	{
 		channel->setLimit(-1);
@@ -122,7 +126,6 @@ Server::do_action_mode_channel(Client *client, std::vector<std::string> args)
 		return;
 	}
 
-	std::string &cmd = args[2];
 
 	if (cmd == "+l" || cmd == "-l")
 		do_action_mode_channel_limit(client, channel, cmd, args);
@@ -170,6 +173,14 @@ Server::do_action_mode_channel(Client *client, std::vector<std::string> args)
 		}
 		Client *opc = get_client_by_nickname(args[3]);
 
+		if (!opc || !channel->is_client(opc))
+		{
+			client->reply(ERR_USERNOTINCHANNEL(client->getNickname(),
+											   opc->getNickname(),
+											   channelName));
+			return;
+		}
+
 		if (cmd[0] == '+')
 		{
 			if (channel->is_op(opc))
@@ -198,6 +209,8 @@ Server::do_action_mode_channel(Client *client, std::vector<std::string> args)
 						BOLDRED + "Le client " + opc->getNickname() +
 						" n'est pas op sur le canal" + channel->getName() +
 						RESET);
+				client->reply(
+						ERR_NEEDMOREPARAMS(client->getNickname(), "MODE"));
 				return;
 			}
 			client->send_msg(

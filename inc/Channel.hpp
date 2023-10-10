@@ -9,6 +9,7 @@
 #include <iostream>
 #include <vector>
 #include "Client.hpp"
+#include "Server.hpp"
 
 class Channel {
 private:
