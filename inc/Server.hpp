@@ -108,6 +108,8 @@ private:
 
 	void do_action_cap(Client *, std::vector<std::string>);
 
+	void do_action_who(Client *, std::vector<std::string>);
+
 	void msgChannel(Client *, std::string, std::vector<std::string>);
 
 	void msgClient(Client *, std::string, std::vector<std::string>);

@@ -4,6 +4,7 @@
 void Server::init_map_action() {
     _map_cmd["ping"] = &Server::do_action_ping;
     _map_cmd["cap"] = &Server::do_action_cap;
+    _map_cmd["who"] = &Server::do_action_who;
     _map_cmd["pass"] = &Server::do_action_pass;
     _map_cmd["nick"] = &Server::do_action_nick;
     _map_cmd["user"] = &Server::do_action_user;
