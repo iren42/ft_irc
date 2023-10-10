@@ -39,6 +39,7 @@ void Server::msgChannel(Client *sender, std::string target,
     CHANNELS::iterator it = _map_channel.find(target);
     if (it != _map_channel.end()) {
         if ((((*it).second)->is_client(sender)) == false) {
+			sender->reply(ERR_CANNOTSENDTOCHAN(sender->getNickname(), target));
             sender->send_msg("ERR_CANNOTSENDTOCHAN");
         } else {
             std::vector<Client *> vec = (((*it).second)->getClients());
@@ -66,23 +67,35 @@ void Server::msgClient(Client *sender, std::string target,
         ((*receiver).second)->reply(RPL_PRIVMSG(target, createMsg(args)));
     }
     else
+	{
+		sender->reply(ERR_NOSUCHNICK(sender->getNickname(), target));
         sender->send_msg("ERR_NOSUCHNICK");
+	}
 }
 
 void Server::do_action_privmsg(Client *sender, std::vector<std::string> args) {
     if (!sender->isVerified())
         return;
     if (args.size() == 1)
+	{
+		sender->reply(ERR_NORECIPIENT(sender->getNickname()));
         sender->send_msg("ERR_NORECIPIENT");
+	}
     else if (args.size() == 2)
+	{
+		sender->reply(ERR_NOTEXTTOSEND(sender->getNickname()));
         sender->send_msg("ERR_NOTEXTTOSEND");
+	}
     else {
         // case 1: target has '#' as the 1st char, it may be an existing channel
         if (args.at(1).at(0) == '#') {
             if (isInMapChannel(args.at(1)))
                 msgChannel(sender, args.at(1), args);
             else
+			{
+				sender->reply(ERR_NOSUCHCHANNEL(sender->getNickname(), args.at(1)));
                 sender->send_msg("Nous n'avons pas trouvé le canal : " + args.at(1));
+			}
         }
             // case 2: target is a client
         else

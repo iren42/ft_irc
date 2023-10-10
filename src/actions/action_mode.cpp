@@ -3,6 +3,7 @@
 void Server::do_action_mode(Client *client, std::vector<std::string> args) {
     if (args.size() < 3) {
         client->send_msg("ERREUR : Utilisation : /MODE <nom canal> <mode_param> [args].");
+	client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "MODE"));	
         return;
     }
 
@@ -18,6 +19,7 @@ Server::do_action_mode_channel_limit(Client *client, Channel *channel, std::stri
     } else if (cmd == "+l") {
         if (args.size() < 4) {
             client->send_msg("ERREUR : Utilisation : /MODE <nom canal> +l <limite>.");
+			client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "MODE"));	
             return;
         }
         int limit = atoi(args[3].c_str());
@@ -42,6 +44,7 @@ Server::do_action_mode_channel_key(Client *client, Channel *channel, std::string
     } else if (cmd == "+k") {
         if (args.size() < 4) {
             client->send_msg("ERREUR : Utilisation : /MODE <nom canal> +k <mdp>.");
+			client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "MODE"));	
             return;
         }
         std::string pass = args[3].c_str();
@@ -59,12 +62,14 @@ void Server::do_action_mode_channel(Client *client, std::vector<std::string> arg
     Channel *channel = get_channel_by_name(channelName);
 
     if (!channel) {
+		client->reply(ERR_NOSUCHCHANNEL(client->getNickname(), channelName));
         client->send_msg(BOLDRED + "Le canal " + channelName + " n'a pas été trouvé."+RESET);
         return;
     }
 
     if (!channel->is_op(client)) {
         channel->setLimit(-1);
+		client->reply(ERR_CHANOPRIVSNEEDED(client->getNickname(), channelName));
         client->send_msg(BOLDRED + "Vous n'êtes pas opérateurs sur le channel " + channelName + "."+RESET);
         return;
     }
@@ -100,6 +105,7 @@ void Server::do_action_mode_channel(Client *client, std::vector<std::string> arg
 
     if (cmd == "-o" || cmd == "+o") {
         if (args.size() < 4) {
+			client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "MODE"));	
             client->send_msg("ERREUR : Utilisation : /MODE <nom canal> " + cmd + " <nickname>.");
             return;
         }

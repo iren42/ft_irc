@@ -5,6 +5,7 @@ void Server::do_action_part(Client *client, std::vector<std::string> args)
 
 	if (args.size() < 2)
 	{
+		client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "PART"));
 		client->send_msg(
 				"ERREUR : La commande PART nécessite un argument (nom du canal).");
 		return;
@@ -26,8 +27,10 @@ void Server::do_action_part(Client *client, std::vector<std::string> args)
 			_map_channel.erase(_map_channel.find(channelName));
 		}
 	} else
+	{
+		client->reply(ERR_NOTONCHANNEL(client->getNickname(), channelName));
 		client->send_msg(
 				"ERREUR : Vous n'êtes pas dans le canal " + channelName);
 
-
+	}
 }

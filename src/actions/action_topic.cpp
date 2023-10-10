@@ -5,6 +5,7 @@ void Server::do_action_topic(Client *client, std::vector<std::string> args)
 
     if (args.size() < 2)
     {
+	client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "TOPIC"));	
         client->send_msg("Utilisation : /TOPIC <nom-du-canal> [nouveau-sujet]");
         return;
     }
@@ -16,6 +17,7 @@ void Server::do_action_topic(Client *client, std::vector<std::string> args)
     if (!channel)
     {
         client->send_msg("Le canal " + channelName + " n'existe pas.");
+		client->reply(ERR_NOSUCHCHANNEL(client->getNickname(), channelName));
         return;
     }
 
@@ -26,6 +28,7 @@ void Server::do_action_topic(Client *client, std::vector<std::string> args)
     {
         if (channel->isModeTopicOp() && !channel->is_op(client))
         {
+			client->reply(ERR_CHANOPRIVSNEEDED(client->getNickname(), channelName));
             client->send_msg(BOLDRED + "Vous n'êtes pas opérateurs sur le channel " + channelName + "." + RESET);
             return;
         }

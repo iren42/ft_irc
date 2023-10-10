@@ -4,6 +4,7 @@ void Server::do_action_kick(Client *client, std::vector<std::string> args) {
 
     if (args.size() < 3) {
         client->send_msg("Utilisation : /KICK <canal> <utilisateur> [raison]");
+	client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "KICK"));	
         return;
     }
 
@@ -14,11 +15,13 @@ void Server::do_action_kick(Client *client, std::vector<std::string> args) {
 
 
     if (!theChannel) {
+		client->reply(ERR_NOSUCHCHANNEL(client->getNickname(), channelName));
         client->send_msg("Le canal" + channelName + "n'existe pas.");
         return;
     }
 
     if (!theChannel->is_op(client)) {
+		client->reply(ERR_CHANOPRIVSNEEDED(client->getNickname(), channelName));
         client->send_msg("Vous n'avez pas les droits d'opérateur pour exécuter cette commande.");
         return;
     }
@@ -27,6 +30,7 @@ void Server::do_action_kick(Client *client, std::vector<std::string> args) {
 
     if (!badClient) {
         client->send_msg(BOLDRED + "Le client " + userName + " n'a pas été trouvé." + RESET);
+		client->reply(ERR_NOSUCHNICK(client->getNickname(), userName));
         return;
     }
 

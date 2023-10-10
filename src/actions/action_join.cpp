@@ -2,14 +2,16 @@
 
 void Server::do_action_join(Client *client, std::vector<std::string> args) {
 
-    if (args.size() != 2 && args.size() != 3) {
+    if (args.size() < 3) {
         client->send_msg(BOLDRED + "Erreur: Format : JOIN <nom du canal> [mot de passe] " + RESET);
+	client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "JOIN"));	
         return;
     }
 
 
     if (args[1][0] != '#') {
         client->send_msg(BOLDRED + "Erreur: Le nom du canal doit commencer par # " + RESET);
+		client->reply(ERR_NOSUCHCHANNEL(client->getNickname(), args[1]));
         return;
     }
 
@@ -28,6 +30,7 @@ void Server::do_action_join(Client *client, std::vector<std::string> args) {
             }
             std::string mdp = args[2];
             if (mdp != channel->getLockPass()) {
+				client->reply(ERR_BADCHANNELKEY(client->getNickname(), canal_name));
                 client->send_msg(BOLDRED + "Mauvais mot de passe." + RESET);
                 std::cout << "real mdp : " << channel->getLockPass() << std::endl;
                 std::cout << "given mdp : " << mdp << std::endl;
@@ -58,7 +61,10 @@ void Server::do_action_join(Client *client, std::vector<std::string> args) {
 
                 channel->replyAll(RPL_JOIN(client->getPrefix(), channel->getName()));
             } else
+			{
+				client->reply(ERR_CHANNELISFULL(client->getNickname(), canal_name));
                 client->send_msg("Vous n'avez pas le droit de rejoindre ce canal");
+			}
         }
     } else {
         Channel *new_Chanel = new Channel(canal_name, client);

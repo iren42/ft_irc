@@ -1,9 +1,8 @@
 #include "Server.hpp"
 
 void Server::do_action_whois(Client *client, std::vector<std::string> args) {
-    if (client->isVerified() == false)
-        return;
-    if (args.size() != 2) {
+    if (args.size() < 2) {
+		client->reply(ERR_NEEDMOREPARAMS(client->getNickname(), "WHOIS"));
         client->send_msg(
                 "Erreur : la syntaxe devrait etre /WHOIS <nick>\nExemple : 'WHOIS john'");
     }
@@ -32,6 +31,7 @@ void Server::do_action_whois(Client *client, std::vector<std::string> args) {
             }
             it++;
         }
+		client->reply(ERR_NOSUCHNICK(client->getNickname(), nick));
         client->send_msg("ERR_NOSUCHNICK");
     }
 }
