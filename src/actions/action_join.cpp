@@ -75,7 +75,7 @@ void Server::do_action_join(Client *client, std::vector<std::string> args) {
     if (channel->getTopic() == "")
         client->reply(RPL_NOTOPIC(client->getNickname(), channel->getName()));
     else
-        client->reply(RPL_TOPIC(client->getPrefix(), channel->getName(), channel->getTopic()));
+        client->reply(RPL_TOPIC( channel->getName(), channel->getTopic()));
 
     channel->replyAll(client->getPrefix() + " " + RPL_JOIN(channel->getName()));
 }

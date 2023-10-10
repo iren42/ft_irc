@@ -30,7 +30,7 @@
 #define RPL_WELCOME(source)                    "001 " + source + " :Bienvenu !!! " + source
 #define RPL_CHANNELMODEIS(source, target, modes, params)"324 " + source + " " + target + " " + modes + " " + params
 #define RPL_NOTOPIC(source, channel)                "331 " + source + " " + channel + " :No topic is set"
-#define RPL_TOPIC(source, channel, topic)            "332 " + source + " " + channel + " " + topic
+#define RPL_TOPIC(channel, topic)		            "TOPIC " + channel + " " + topic
 #define RPL_INVITING(source, nickname, channel)        "341 " + source + " " + nickname + " " + channel
 #define RPL_NAMREPLY(source, channel, users)        "353 " + source + " = " + channel + " :" + users
 #define RPL_PING(command)                           "PONG :" + command
