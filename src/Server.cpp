@@ -187,6 +187,7 @@ void Server::disconnect(Client *pClient)
 		} else
 			++it2;
 	}
+	epoll_ctl(_epollfd, EPOLL_CTL_DEL, pClient->getFd(), 0);
 	close(pClient->getFd());
 	delete pClient;
 }
