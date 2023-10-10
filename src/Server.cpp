@@ -172,7 +172,6 @@ void Server::disconnect(Client *pClient)
 	{
 		if (it->second == pClient)
 			_map_client.erase(it++);
-
 		else
 			++it;
 	}
@@ -189,6 +188,7 @@ void Server::disconnect(Client *pClient)
 			++it2;
 	}
 	close(pClient->getFd());
+	delete pClient;
 }
 
 void handleSig(int sigint)

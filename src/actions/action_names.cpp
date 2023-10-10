@@ -25,6 +25,8 @@ void Server::do_action_names(Client *client, std::vector<std::string> args)
                 if (started)
                     ss << ", ";
                 started = true;
+				if(canal->is_op(*it))
+					ss<<"@";
                 ss << (*it)->getNickname();
             }
             ss << "\n";
