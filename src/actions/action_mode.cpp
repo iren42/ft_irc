@@ -106,7 +106,9 @@ Server::do_action_mode_channel(Client *client, std::vector<std::string> args)
 			modes += "l";
 		if (channel->isModeTopicOp())
 			modes += "t";
-		client->reply(RPL_CHANNELMODEIS(client->getPrefix(), channelName, modes, ""));
+		client->reply(
+				RPL_CHANNELMODEIS(client->getNickname(), channelName, modes,
+								  ""));
 		return;
 	}
 
@@ -183,6 +185,9 @@ Server::do_action_mode_channel(Client *client, std::vector<std::string> args)
 					" est maintenant op sur le canal" +
 					channel->getName() +
 					RESET);
+			client->getServer()->send_all(
+					client->getPrefix() + " MODE " + channelName + " +o " +
+					opc->getNickname() + "\r\n");
 			channel->add_op(opc);
 		}
 		if (cmd[0] == '-')
@@ -191,8 +196,7 @@ Server::do_action_mode_channel(Client *client, std::vector<std::string> args)
 			{
 				client->send_msg(
 						BOLDRED + "Le client " + opc->getNickname() +
-						" n'est pas op sur le canal" +
-						channel->getName() +
+						" n'est pas op sur le canal" + channel->getName() +
 						RESET);
 				return;
 			}
@@ -200,6 +204,9 @@ Server::do_action_mode_channel(Client *client, std::vector<std::string> args)
 					BOLDGREEN + "Le client " + opc->getNickname() +
 					" n'est plus op sur le canal" + channel->getName() +
 					RESET);
+			client->getServer()->send_all(
+					client->getPrefix() + " MODE " + channelName + " -o " +
+					opc->getNickname() + "\r\n");
 			channel->remove_op(opc);
 		}
 	}

@@ -26,6 +26,7 @@ void Server::do_action_join(Client *client, std::vector<std::string> args) {
         if (channel->getLockPass() != "") {
             if (args.size() != 3) {
                 client->send_msg(BOLDRED + "Le channel " + canal_name + " a un mot de passe." + RESET);
+				client->reply(ERR_BADCHANNELKEY(client->getNickname(), canal_name));
                 return;
             }
             std::string mdp = args[2];

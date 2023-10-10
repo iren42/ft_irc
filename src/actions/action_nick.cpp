@@ -41,7 +41,9 @@ void Server::do_action_nick(Client *client, std::vector<std::string> args)
 		client->reply(RPL_WELCOME(nickname));
 	std::string old_prefix = client->getPrefix();
 	client->setNickname(nickname);
-	client->send_brut(old_prefix + " " + RPL_NICK(nickname)+"\r\n");
+
+	client->getServer()->send_all(old_prefix + " " + RPL_NICK(nickname) + "\r\n");
+
 	std::string msg = "Nickname changé en ";
 	msg.append(args[1]);
 	client->send_msg(msg);

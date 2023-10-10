@@ -153,6 +153,16 @@ Channel *Server::get_channel_by_name(std::string name)
 	return it->second;
 }
 
+void Server::send_all(std::string msg)
+{
+	CLIENTS::iterator it = _map_client.begin();
+	while (it != _map_client.end())
+	{
+		it->second->send_brut(msg);
+		++it;
+	}
+}
+
 void Server::disconnect(Client *pClient)
 {
 
