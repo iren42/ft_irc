@@ -1,5 +1,4 @@
 #include "Server.hpp"
-#include "replycode.h"
 
 void Server::init_map_action() {
     _map_cmd["ping"] = &Server::do_action_ping;

@@ -1,5 +1,4 @@
 #include "Server.hpp"
-#include "replycode.h"
 
 void Server::do_action_nick(Client *client, std::vector<std::string> args)
 {

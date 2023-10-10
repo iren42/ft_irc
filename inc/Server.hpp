@@ -23,7 +23,7 @@ class Channel;
 #include <signal.h>
 #include <vector>
 
-#include "replycode.h"
+#include "replycode.hpp"
 #include "Channel.hpp"
 #include "Client.hpp"
 #include "Colors.hpp"

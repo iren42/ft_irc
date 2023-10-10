@@ -28,7 +28,7 @@
 #define ERR_CHANOPRIVSNEEDED(source, channel)        "482 " + source + " " + channel + " :You're not channel creator or operator"
 
 
-#define RPL_WELCOME(source)                    "001 " + source + " :Bienvenu !!! " + source
+#define RPL_WELCOME(source)                    "001 " + source + " :Bienvenue !!! " + source
 #define RPL_CHANNELMODEIS(source, target, modes, params)"324 " + source + " " + target + " " + modes + " " + params
 #define RPL_NOTOPIC(source, channel)                "331 " + source + " " + channel + " :No topic is set"
 #define RPL_TOPIC(channel, topic)		            "TOPIC " + channel + " " + topic
